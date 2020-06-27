@@ -16,7 +16,6 @@ namespace MizuiroBot.Discord
         private DiscordSocketClient botUser = new DiscordSocketClient();
         private CommandService commandService = new CommandService();
         private char CommandPrefix => Program.Config.CommandPrefix;
-        public DiscordSocketClient BotUser => botUser;
         public CommandService CommandService => commandService;
 
         public void Init()
@@ -61,7 +60,7 @@ namespace MizuiroBot.Discord
             var context = new SocketCommandContext(botUser, umsg);
 
             IResult commandResult = await commandService.ExecuteAsync(context, argPos, null);
-            if (commandResult.Error.HasValue)
+            if (commandResult.Error.HasValue && commandResult.Error.Value != CommandError.UnknownCommand)
             {
                 CVTS.WriteLineError(commandResult.ErrorReason);
             }
