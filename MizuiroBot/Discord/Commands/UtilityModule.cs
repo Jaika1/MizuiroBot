@@ -26,7 +26,7 @@ namespace MizuiroBot.Discord.Commands
                     Title = "Mizuiro Bot Help List",
                     Description = "Bot created by Jaika★, public repo available @ https://github.com/Jaika1/MizuiroBot",
                     Color = new Color(20, 150, 255),
-                    ImageUrl = Context.Client.CurrentUser.GetAvatarUrl()
+                    ThumbnailUrl = Context.Client.CurrentUser.GetAvatarUrl()
                 }.Build();
             }
 
