@@ -45,7 +45,8 @@ namespace MizuiroBot.Discord.Commands
                         groupEmbed.AddField(new EmbedFieldBuilder()
                         {
                             Name = command.Name,
-                            Value = command.Summary
+                            Value = command.Summary,
+                            IsInline = false
                         });
                     }
                     groupEmbeds.Add(groupEmbed);
@@ -65,6 +66,39 @@ namespace MizuiroBot.Discord.Commands
                 foreach (EmbedBuilder embed in groupEmbeds)
                 {
                     await Context.Message.Author.SendMessageAsync(embed: embed.Build());
+                }
+            }
+            // If a specific command is specified.
+            else
+            {
+                CommandInfo specifiedCommand = Program.DiscordBot.CommandService.Commands.First(x => x.Name == helpCommandName);
+                if (specifiedCommand != null)
+                {
+                    EmbedBuilder commandEmbed = new EmbedBuilder();
+                    commandEmbed.Title = specifiedCommand.Name;
+                    commandEmbed.Description = specifiedCommand.Summary;
+                    commandEmbed.Color = new Color(20, 150, 255);
+
+                    foreach (ParameterInfo param in specifiedCommand.Parameters)
+                    {
+                        EmbedFieldBuilder paramField = new EmbedFieldBuilder();
+                        paramField.IsInline = false;
+                        paramField.Name = $"`{param.Name}{(param.IsOptional ? " (Optional)" : "")}`";
+                        paramField.Value = param.Summary;
+                        commandEmbed.Fields.Add(paramField);
+                    }
+
+                    EmbedFooterBuilder footer = new EmbedFooterBuilder();
+                    footer.Text = $"Usage: {Program.Config.CommandPrefix}{specifiedCommand.Name}";
+                    foreach (EmbedFieldBuilder field in commandEmbed.Fields)
+                        footer.Text += $" <{field.Name.Replace("`", "")}>";
+                    commandEmbed.Footer = footer;
+
+                    await Context.Channel.SendMessageAsync(embed: commandEmbed.Build());
+                }
+                else
+                {
+                    await Context.Channel.SendMessageAsync("I couldn't find the command you specified!");
                 }
             }
         }
