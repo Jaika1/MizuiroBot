@@ -23,7 +23,7 @@ namespace MizuiroBot.Discord.Commands
                 {
                     EmbedBuilder groupEmbed = new EmbedBuilder();
                     groupEmbed.Title = Regex.Replace(module.Name, "((?<=[a-z])[A-Z]|[A-Z](?=[a-z]))", " $1");
-                    groupEmbed.Color = new Color(0, 80, 255);
+                    groupEmbed.Color = new Color(20, 150, 255);
                     foreach(CommandInfo command in module.Commands)
                     {
                         groupEmbed.AddField(new EmbedFieldBuilder()
