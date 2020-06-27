@@ -5,11 +5,11 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace MizuiroBot.Discord.Commands
 {
-    [Group("Ultility")]
     public class UtilityModule: ModuleBase<SocketCommandContext>
     {
         [Command("help")]
@@ -22,7 +22,7 @@ namespace MizuiroBot.Discord.Commands
                 foreach(ModuleInfo module in Program.DiscordBot.CommandService.Modules)
                 {
                     EmbedBuilder groupEmbed = new EmbedBuilder();
-                    groupEmbed.Title = module.Group;
+                    groupEmbed.Title = Regex.Replace(module.Name, "((?<=[a-z])[A-Z]|[A-Z](?=[a-z]))", " $1");
                     groupEmbed.Color = new Color(0, 80, 255);
                     foreach(CommandInfo command in module.Commands)
                     {
