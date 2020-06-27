@@ -16,6 +16,7 @@ namespace MizuiroBot.Discord
         private DiscordSocketClient botUser = new DiscordSocketClient();
         private CommandService commandService = new CommandService();
         private char CommandPrefix => Program.Config.CommandPrefix;
+        public DiscordSocketClient BotUser => botUser;
         public CommandService CommandService => commandService;
 
         public void Init()

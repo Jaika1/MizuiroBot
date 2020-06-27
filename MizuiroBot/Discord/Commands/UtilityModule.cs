@@ -12,6 +12,14 @@ namespace MizuiroBot.Discord.Commands
 {
     public class UtilityModule: ModuleBase<SocketCommandContext>
     {
+        private Embed helpPrefixEmbed = new EmbedBuilder()
+        {
+            Title = "Mizuiro Bot Help List",
+            Description = "Bot created by Jaika★, public repo available @ https://github.com/Jaika1/MizuiroBot",
+            Color = new Color(20, 150, 255),
+            ImageUrl = Program.DiscordBot.BotUser.CurrentUser.GetAvatarUrl()
+        }.Build();
+
         [Command("help")]
         [Summary("Displays the full list of commands, split into groups. Specify a command name for a more in-depth summary.")]
         public async Task HelpCommand([Summary("The command to learn more about, optional.")] string helpCommandName = "")
@@ -37,7 +45,7 @@ namespace MizuiroBot.Discord.Commands
 
                 try
                 {
-                    await Context.Message.Author.SendMessageAsync("**Mizuiro Bot Help:**");
+                    await Context.Message.Author.SendMessageAsync(embed: helpPrefixEmbed);
                 }
                 catch
                 {
