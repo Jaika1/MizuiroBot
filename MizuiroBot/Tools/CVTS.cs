@@ -39,6 +39,7 @@ namespace MizuiroBot.Tools
 #endif
 #if Linux
             CVTS.WriteLineInfo("No need to enable CVTS, terminal already supports ANSI codes.");
+            return true;
 #endif
         }
 
