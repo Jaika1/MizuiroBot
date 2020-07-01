@@ -14,7 +14,10 @@ namespace MizuiroBot.Twitch
     {
         public void AddModules(Assembly asm)
         {
-            var commands = asm.GetCustomAttributes<TwitchCommand>();
+            var commandModules = from t in asm.GetTypes()
+                           where t.IsAssignableFrom(typeof(TwitchCommandModule))
+                           select t;
+
         }
 
         public void ExecuteCommand(ITwitchClient client, ChatCommand command)

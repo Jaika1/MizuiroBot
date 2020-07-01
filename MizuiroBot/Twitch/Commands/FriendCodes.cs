@@ -4,7 +4,7 @@ using System.Text;
 
 namespace MizuiroBot.Twitch.Commands
 {
-    public class FriendCodes
+    public class FriendCodes : TwitchCommandModule
     {
         [TwitchCommand("fc")]
         public void FriendCodesCommand()
