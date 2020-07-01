@@ -17,12 +17,11 @@ namespace MizuiroBot.Twitch
             var commandModules = from t in asm.GetTypes()
                            where t.IsAssignableFrom(typeof(TwitchCommandModule))
                            select t;
-
         }
 
         public void ExecuteCommand(ITwitchClient client, ChatCommand command)
         {
-
+            
         }
     }
 }

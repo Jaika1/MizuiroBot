@@ -8,6 +8,8 @@ namespace MizuiroBot.Tools
 {
     public static class CVTS
     {
+
+#if Windows
         [DllImport("kernel32.dll")]
         static extern IntPtr GetStdHandle(int dword);
 
@@ -22,6 +24,7 @@ namespace MizuiroBot.Tools
         public const char EscapeChar = '\x1B';
 
         static IntPtr consoleOutputBuffer = GetStdHandle(-11);
+#endif
 
         public static bool TryEnable()
         {
@@ -45,13 +48,8 @@ namespace MizuiroBot.Tools
 
         public static string RgbForeColorString(byte r, byte g, byte b)
         {
-            return $"{EscapeChar}[38;2;{r};{g};{b}m";
-        }
-
-        public static string RgbForeColorString(Color color)
-        {
 #if Windows
-            return $"{EscapeChar}[38;2;{color.R};{color.G};{color.B}m";
+            return $"{EscapeChar}[38;2;{r};{g};{b}m";
 #endif
 #if Linux
             // Maybe i'll come back to this later, bash doesn't support full-colour ANSI escape sequences :(
@@ -59,14 +57,25 @@ namespace MizuiroBot.Tools
 #endif
         }
 
+        public static string RgbForeColorString(Color color)
+        {
+            return RgbForeColorString(color.R, color.G, color.B);
+        }
+
         public static string RgbBackColorString(byte r, byte g, byte b)
         {
+#if Windows
             return $"{EscapeChar}[48;2;{r};{g};{b}m";
+#endif
+#if Linux
+            // Maybe i'll come back to this later, bash doesn't support full-colour ANSI escape sequences :(
+            return $"";
+#endif
         }
 
         public static string RgbBackColorString(Color color)
         {
-            return $"{EscapeChar}[48;2;{color.R};{color.G};{color.B}m";
+            return RgbBackColorString(color.R, color.G, color.B);
         }
 
         public static void WriteLine(string text, Color foreColor, string prefix)
