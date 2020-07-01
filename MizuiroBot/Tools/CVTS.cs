@@ -50,7 +50,13 @@ namespace MizuiroBot.Tools
 
         public static string RgbForeColorString(Color color)
         {
+#if Windows
             return $"{EscapeChar}[38;2;{color.R};{color.G};{color.B}m";
+#endif
+#if Linux
+            // Maybe i'll come back to this later, bash doesn't support full-colour ANSI escape sequences :(
+            return $"";
+#endif
         }
 
         public static string RgbBackColorString(byte r, byte g, byte b)
