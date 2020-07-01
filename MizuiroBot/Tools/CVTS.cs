@@ -25,6 +25,7 @@ namespace MizuiroBot.Tools
 
         public static bool TryEnable()
         {
+#if Windows
             try
             {
                 int currentFlags;
@@ -35,6 +36,10 @@ namespace MizuiroBot.Tools
             {
                 return false;
             }
+#endif
+#if Linux
+            CVTS.WriteLineInfo("No need to enable CVTS, terminal already supports ANSI codes.")
+#endif
         }
 
         public static string RgbForeColorString(byte r, byte g, byte b)
