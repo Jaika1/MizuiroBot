@@ -20,7 +20,7 @@ namespace MizuiroBot.Shared
 
         public SharedBotInfo(ulong discordGuild) { DiscordGuildId = discordGuild; }
 
-        public SharedBotInfo(string twitchChannel) { TwitchChannelName = twitchChannel; }
+        //public SharedBotInfo(string twitchChannel) { TwitchChannelName = twitchChannel; }
 
         public static void LoadSharedInfo()
         {
@@ -41,14 +41,22 @@ namespace MizuiroBot.Shared
 
         public static SharedBotInfo GetSharedInfo(string twitchChannel)
         {
-            // Usage of a lesser known operator, the 'null-coalescing operator'. If the left is null, it will instead use the right hand side.
-            // In this example, if shared info doesn't exist for the specified discord guild, it will instead be created.
-            return sharedInfoCollection.Find(i => i.TwitchChannelName == twitchChannel) ?? new SharedBotInfo(twitchChannel);
+            // Not using the operator like last time, all the heavy-setup things should be done in discord.
+            return sharedInfoCollection.Find(i => i.TwitchChannelName == twitchChannel);// ?? new SharedBotInfo(twitchChannel);
         }
 
-        public void SetDiscord(ulong discordGuild)
+        public bool SetTwitch(string twitchChannel)
         {
+            // Return false if another shared info already references this channel. 
+            if (sharedInfoCollection.Find(i => i.TwitchChannelName == twitchChannel) != null) return false;
 
+            TwitchChannelName = twitchChannel;
+            return true;
+        }
+
+        public void RemoveTwitch()
+        {
+            TwitchChannelName = "";
         }
     }
 }
