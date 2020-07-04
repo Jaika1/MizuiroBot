@@ -1,5 +1,6 @@
 ﻿using MizuiroBot;
 using MizuiroBot.Discord;
+using MizuiroBot.Shared;
 using MizuiroBot.Splatoon;
 using MizuiroBot.Tools;
 using MizuiroBot.Twitch;
@@ -27,8 +28,9 @@ namespace MizuiroBot
             CVTS.WriteLineInfo($"{Process.GetCurrentProcess().ProcessName} version {Process.GetCurrentProcess().MainModule.FileVersionInfo.ProductVersion}, created by Jaika★.");
             // Download/reload Splatoon 2 data from the internet/local storage
             Data.LoadSplatoon2Data();
-            // Load the config
+            // Load the config and shared info.
             Config = Config.LoadConfig();
+            SharedBotInfo.LoadSharedInfo();
             // Initialise both bots 
             DiscordBot.Init();
             TwitchBot.Init(Config.TwitchBotUsername, Config.TwitchOAuth2);
