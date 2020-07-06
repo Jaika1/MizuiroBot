@@ -9,8 +9,8 @@ namespace MizuiroBot.Shared
 {
     public class SharedBotInfo
     {
-        private static List<SharedBotInfo> sharedInfoCollection; // = new List<SharedBotInfo>();
-        private const string SharedInfoLocation = @".\sharedBotInfo.json";
+        private static List<SharedBotInfo> sharedInfoCollection = new List<SharedBotInfo>();
+        private const string SharedInfoLocation = @".\sharedBotInfo";
 
         public ulong DiscordGuildId = 0;
         public string TwitchChannelName = "";
@@ -24,12 +24,26 @@ namespace MizuiroBot.Shared
 
         public static void LoadSharedInfo()
         {
-            sharedInfoCollection = JsonConvert.DeserializeObject<List<SharedBotInfo>>(File.ReadAllText(SharedInfoLocation));
+            if (!Directory.Exists(SharedInfoLocation))
+            {
+                Directory.CreateDirectory(SharedInfoLocation);
+            }
+            else
+            {
+                foreach (string file in Directory.EnumerateFiles(SharedInfoLocation, "*.json", SearchOption.TopDirectoryOnly))
+                {
+                    sharedInfoCollection.Add(JsonConvert.DeserializeObject<SharedBotInfo>(File.ReadAllText(file)));
+                }
+            }
         }
 
-        public static void SaveSharedInfo()
+        public void SaveSharedInfo()
         {
-            File.WriteAllText(SharedInfoLocation, JsonConvert.SerializeObject(sharedInfoCollection));
+            if (!Directory.Exists(SharedInfoLocation))
+            {
+                Directory.CreateDirectory(SharedInfoLocation);
+            }
+            File.WriteAllText(@$"{SharedInfoLocation}\{DiscordGuildId}.json", JsonConvert.SerializeObject(sharedInfoCollection));
         }
 
         public static SharedBotInfo GetSharedInfo(ulong discordGuild)
