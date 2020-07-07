@@ -1,4 +1,5 @@
-﻿using MizuiroBot.Tools;
+﻿using MizuiroBot.Shared;
+using MizuiroBot.Tools;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -36,11 +37,19 @@ namespace MizuiroBot.Twitch
 
         private void OnConnected(object sender, TwitchLib.Client.Events.OnConnectedArgs e)
         {
-            CVTS.WriteLineTwitch("Joining all specified channels from the config...");
-            foreach(string channelName in Program.Config.TwitchChannels)
+            CVTS.WriteLineTwitch("Joining all specified channels in shared channel info...");
+            foreach(SharedBotInfo shared in SharedBotInfo.SharedInfo)
             {
-                CVTS.WriteLineTwitch($"Joining channel {channelName}...");
-                botUser.JoinChannel(channelName);
+                if (!string.IsNullOrWhiteSpace(shared.TwitchChannelName))
+                {
+                    CVTS.WriteLineTwitch($"Joining channel {shared.TwitchChannelName}...");
+                    botUser.JoinChannel(shared.TwitchChannelName);
+                    CVTS.WriteLineTwitch($"Joined channel {shared.TwitchChannelName} successfully!");
+                }
+                else
+                {
+                    CVTS.WriteLineTwitch($"Channel not found in shared info.");
+                }
             }
             CVTS.WriteLineOk("Twitch bot started successfully!");
         }

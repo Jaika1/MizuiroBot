@@ -13,7 +13,7 @@ namespace MizuiroBot
         public string TwitchBotUsername = "";
         public string TwitchOAuth2 = "";
         public char CommandPrefix = '!';
-        public string[] TwitchChannels = new string[] { "" };
+        //public string[] TwitchChannels = new string[] { "" };
         public const string ConfigDir = @".\Config.json";
 
         public static Config LoadConfig()

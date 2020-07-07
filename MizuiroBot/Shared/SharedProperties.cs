@@ -12,6 +12,7 @@ namespace MizuiroBot.Shared
         private static List<SharedBotInfo> sharedInfoCollection = new List<SharedBotInfo>();
         private const string SharedInfoLocation = @".\sharedBotInfo";
 
+        public static List<SharedBotInfo> SharedInfo => sharedInfoCollection;
         public ulong DiscordGuildId = 0;
         public string TwitchChannelName = "";
         public Dictionary<string, string> CustomCommands = new Dictionary<string, string>(); //Key is the command identifier, value is the response.
