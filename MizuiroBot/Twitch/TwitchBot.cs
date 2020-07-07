@@ -2,6 +2,7 @@
 using MizuiroBot.Tools;
 using System;
 using System.Collections.Generic;
+using System.Reflection.Metadata;
 using System.Text;
 using System.Threading.Tasks;
 using TwitchLib.Client;
@@ -35,6 +36,21 @@ namespace MizuiroBot.Twitch
             botUser.Connect();
         }
 
+        public bool JoinChannel(string channel)
+        {
+            try
+            {
+                CVTS.WriteLineTwitch($"Joining channel {channel}...");
+                botUser.JoinChannel(channel);
+                CVTS.WriteLineTwitch($"Joined channel {channel} successfully!");
+                return true;
+            } catch
+            {
+                CVTS.WriteLineTwitch($"Failed to join channel {channel}!");
+                return false;
+            }
+        }
+
         private void OnConnected(object sender, TwitchLib.Client.Events.OnConnectedArgs e)
         {
             CVTS.WriteLineTwitch("Joining all specified channels in shared channel info...");
@@ -42,9 +58,7 @@ namespace MizuiroBot.Twitch
             {
                 if (!string.IsNullOrWhiteSpace(shared.TwitchChannelName))
                 {
-                    CVTS.WriteLineTwitch($"Joining channel {shared.TwitchChannelName}...");
-                    botUser.JoinChannel(shared.TwitchChannelName);
-                    CVTS.WriteLineTwitch($"Joined channel {shared.TwitchChannelName} successfully!");
+                    JoinChannel(shared.TwitchChannelName);
                 }
                 else
                 {
