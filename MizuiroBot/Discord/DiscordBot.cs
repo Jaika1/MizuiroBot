@@ -75,7 +75,7 @@ namespace MizuiroBot.Discord
                     {
                         try
                         {
-                            CustomCommandInfo customCommand = shared.CustomCommands.First(x => x.Key.StartsWith(umsg.Content.Split(' ')[0].Remove(0, 1)));
+                            CustomCommandInfo customCommand = shared.CustomCommands.First(x => x.Key.StartsWith(umsg.Content.Remove(0, 1)));
                             await context.Channel.SendMessageAsync(customCommand.Value);
                         }
                         catch (Exception e) {

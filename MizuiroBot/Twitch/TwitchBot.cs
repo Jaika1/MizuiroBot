@@ -151,13 +151,14 @@ namespace MizuiroBot.Twitch
                 }
                 catch { }
             }
+
             //switch (e.Command.CommandText)
             //{
             //    case "fc":
             //        botUser.SendMessage(commandChannel, "Jaika★ SW-2318-9798-0489 <--> ジャイカ★ SW-0855-8018-0899 <--> Jaika3 SW-4531-8713-2907 <--> Jaika4 SW-5530-5326-3525 <--> Jaika5 SW-5249-3417-8304");
             //        break;
             //    case "discord":
-            //        botUser.SendMessage(commandChannel, "Join the discord server using this link! Prepare yourself for a world of peak inactivity! https://discord.gg/sq45W4B ");
+            //        botUser.SendMessage(commandChannel, "Join the discord server using this link and discover a world of peak inactivity! https://discord.gg/sq45W4B");
             //        break;
             //}
         }
