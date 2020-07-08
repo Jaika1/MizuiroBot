@@ -75,10 +75,12 @@ namespace MizuiroBot.Discord
                     {
                         try
                         {
-                            CustomCommandInfo customCommand = shared.CustomCommands.First(x => x.Key.StartsWith(umsg.Content.Split(' ')[0]));
+                            CustomCommandInfo customCommand = shared.CustomCommands.First(x => x.Key.StartsWith(umsg.Content.Split(' ')[0].Remove(0, 1)));
                             await context.Channel.SendMessageAsync(customCommand.Value);
                         }
-                        catch { }
+                        catch (Exception e) {
+                            CVTS.WriteLineError(e.ToString());
+                        }
                     }
                 }
             }
