@@ -30,5 +30,23 @@ namespace MizuiroBot.Discord.Commands
             }
             shared.SaveSharedInfo();
         }
+
+        [Command("delcommand")]
+        [Summary("Deletes a custom command with the specified key.")]
+        public async Task SetSharedCommand([Summary("The command to be removed.")] string command)
+        {
+            SharedBotInfo shared = SharedBotInfo.GetSharedInfo(Context.Guild.Id);
+            if (shared.CustomCommands.Exists(x => x.Key == command))
+            {
+                CustomCommandInfo customCommand = shared.CustomCommands.Find(x => x.Key == command);
+                shared.CustomCommands.Remove(customCommand);
+                await Context.Channel.SendMessageAsync($"Bye bye, `{Program.Config.CommandPrefix}{command}`.");
+            }
+            else
+            {
+                await Context.Channel.SendMessageAsync($"I couldn't find that command anywhere!");
+            }
+            shared.SaveSharedInfo();
+        }
     }
 }
