@@ -33,7 +33,7 @@ namespace MizuiroBot.Discord.Commands
 
         [Command("delcommand")]
         [Summary("Deletes a custom command with the specified key.")]
-        public async Task SetSharedCommand([Summary("The command to be removed.")] string command)
+        public async Task DelSharedCommand([Summary("The command to be removed.")] string command)
         {
             SharedBotInfo shared = SharedBotInfo.GetSharedInfo(Context.Guild.Id);
             if (shared.CustomCommands.Exists(x => x.Key == command))

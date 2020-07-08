@@ -96,7 +96,7 @@ namespace MizuiroBot.Shared
         }
     }
 
-    public struct CustomCommandInfo
+    public class CustomCommandInfo
     {
         public string Key;
         public string Value;
