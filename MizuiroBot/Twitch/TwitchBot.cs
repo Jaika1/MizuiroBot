@@ -2,6 +2,7 @@
 using MizuiroBot.Tools;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Reflection.Metadata;
 using System.Text;
 using System.Threading.Tasks;
@@ -49,6 +50,37 @@ namespace MizuiroBot.Twitch
                 CVTS.WriteLineTwitch($"Failed to join channel {channel}!");
                 return false;
             }
+        }
+
+        public void LeaveChannel(string channel)
+        {
+            try
+            {
+                CVTS.WriteLineTwitch($"Leaving channel {channel}...");
+                botUser.LeaveChannel(channel);
+                CVTS.WriteLineTwitch($"Left channel {channel}.");
+            }
+            catch
+            {
+                CVTS.WriteLineTwitch($"Channel {channel} already left!");
+            }
+        }
+
+        public void SendToChannel(string message, string channel)
+        {
+            JoinedChannel chan = botUser.JoinedChannels.First(x => x.Channel == channel);
+            if (chan != null)
+            {
+                try
+                {
+                    botUser.SendMessage(chan, message);
+                } catch { }
+            }
+        }
+
+        public bool IsChannelJoined(string channel)
+        {
+            return botUser.JoinedChannels.First(x => x.Channel == channel) != null;
         }
 
         private void OnConnected(object sender, TwitchLib.Client.Events.OnConnectedArgs e)
@@ -104,15 +136,29 @@ namespace MizuiroBot.Twitch
         private void OnChatCommandReceived(object sender, TwitchLib.Client.Events.OnChatCommandReceivedArgs e)
         {
             JoinedChannel commandChannel = botUser.GetJoinedChannel(e.Command.ChatMessage.Channel);
-            switch (e.Command.CommandText)
+            SharedBotInfo shared = SharedBotInfo.GetSharedInfo(commandChannel.Channel);
+
+            if (shared != null)
             {
-                case "fc":
-                    botUser.SendMessage(commandChannel, "Jaika★ SW-2318-9798-0489 <--> ジャイカ★ SW-0855-8018-0899 <--> Jaika3 SW-4531-8713-2907 <--> Jaika4 SW-5530-5326-3525 <--> Jaika5 SW-5249-3417-8304");
-                    break;
-                case "discord":
-                    botUser.SendMessage(commandChannel, "Join the discord server using this link! Prepare yourself for a world of peak inactivity! https://discord.gg/sq45W4B ");
-                    break;
+                KeyValuePair<string, string>? customCommand = shared.CustomCommands.First(x => x.Key == e.Command.CommandText);
+                if (customCommand.HasValue)
+                {
+                    try
+                    {
+                        botUser.SendMessage(commandChannel, customCommand.Value.Value);
+                    }
+                    catch { }
+                }
             }
+            //switch (e.Command.CommandText)
+            //{
+            //    case "fc":
+            //        botUser.SendMessage(commandChannel, "Jaika★ SW-2318-9798-0489 <--> ジャイカ★ SW-0855-8018-0899 <--> Jaika3 SW-4531-8713-2907 <--> Jaika4 SW-5530-5326-3525 <--> Jaika5 SW-5249-3417-8304");
+            //        break;
+            //    case "discord":
+            //        botUser.SendMessage(commandChannel, "Join the discord server using this link! Prepare yourself for a world of peak inactivity! https://discord.gg/sq45W4B ");
+            //        break;
+            //}
         }
     }
 }
