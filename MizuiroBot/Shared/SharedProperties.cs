@@ -1,4 +1,5 @@
 ﻿using Discord;
+using MizuiroBot.Tools;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -15,7 +16,7 @@ namespace MizuiroBot.Shared
         public static List<SharedBotInfo> SharedInfo => sharedInfoCollection;
         public ulong DiscordGuildId = 0;
         public string TwitchChannelName = "";
-        public Dictionary<string, string> CustomCommands = new Dictionary<string, string>(); //Key is the command identifier, value is the response.
+        public List<CustomCommandInfo> CustomCommands = new List<CustomCommandInfo>(); //Key is the command identifier, value is the response.
 
         public SharedBotInfo() { }
 
@@ -25,8 +26,10 @@ namespace MizuiroBot.Shared
 
         public static void LoadSharedInfo()
         {
+            CVTS.WriteLineShared($"Loading shared info from '{SharedInfoLocation}'...");
             if (!Directory.Exists(SharedInfoLocation))
             {
+                CVTS.WriteLineShared($"Shared info directory not found! directory will now be created...");
                 Directory.CreateDirectory(SharedInfoLocation);
             }
             else
@@ -36,15 +39,26 @@ namespace MizuiroBot.Shared
                     sharedInfoCollection.Add(JsonConvert.DeserializeObject<SharedBotInfo>(File.ReadAllText(file)));
                 }
             }
+            CVTS.WriteLineOk($"Successfully loaded shared info for {sharedInfoCollection.Count} servers!");
         }
 
         public void SaveSharedInfo()
         {
+            CVTS.WriteLineShared($"Attempting to save shared info for discord guild ID {DiscordGuildId}...");
             if (!Directory.Exists(SharedInfoLocation))
             {
+                CVTS.WriteLineShared($"Shared info directory not found! directory will now be created...");
                 Directory.CreateDirectory(SharedInfoLocation);
             }
-            File.WriteAllText(@$"{SharedInfoLocation}\{DiscordGuildId}.json", JsonConvert.SerializeObject(sharedInfoCollection));
+            try
+            {
+                File.WriteAllText(@$"{SharedInfoLocation}\{DiscordGuildId}.json", JsonConvert.SerializeObject(this));
+                CVTS.WriteLineOk($"Saved shared info successfully.");
+            }
+            catch (Exception e)
+            {
+                CVTS.WriteLineError($"Failed to save shared info! {e.Message}");
+            }
         }
 
         public static SharedBotInfo GetSharedInfo(ulong discordGuild)
@@ -80,5 +94,11 @@ namespace MizuiroBot.Shared
         {
             TwitchChannelName = "";
         }
+    }
+
+    public struct CustomCommandInfo
+    {
+        public string Key;
+        public string Value;
     }
 }

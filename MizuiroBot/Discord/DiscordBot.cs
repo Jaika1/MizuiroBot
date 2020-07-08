@@ -1,9 +1,11 @@
 ﻿using Discord;
 using Discord.Commands;
 using Discord.WebSocket;
+using MizuiroBot.Shared;
 using MizuiroBot.Tools;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Text;
@@ -60,9 +62,25 @@ namespace MizuiroBot.Discord
             var context = new SocketCommandContext(botUser, umsg);
 
             IResult commandResult = await commandService.ExecuteAsync(context, argPos, null);
-            if (commandResult.Error.HasValue && commandResult.Error.Value != CommandError.UnknownCommand)
+            if (commandResult.Error.HasValue)
             {
-                CVTS.WriteLineError(commandResult.ErrorReason);
+                if (commandResult.Error.Value != CommandError.UnknownCommand)
+                {
+                    CVTS.WriteLineError(commandResult.ErrorReason);
+                }
+                else
+                {
+                    SharedBotInfo shared = SharedBotInfo.GetSharedInfo(context.Guild.Id);
+                    if (shared != null)
+                    {
+                        try
+                        {
+                            CustomCommandInfo customCommand = shared.CustomCommands.First(x => x.Key.StartsWith(umsg.Content.Split(' ')[0]));
+                            await context.Channel.SendMessageAsync(customCommand.Value);
+                        }
+                        catch { }
+                    }
+                }
             }
         }
     }

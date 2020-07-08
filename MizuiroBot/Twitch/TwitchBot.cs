@@ -68,19 +68,23 @@ namespace MizuiroBot.Twitch
 
         public void SendToChannel(string message, string channel)
         {
-            JoinedChannel chan = botUser.JoinedChannels.First(x => x.Channel == channel);
-            if (chan != null)
+            try
             {
-                try
-                {
-                    botUser.SendMessage(chan, message);
-                } catch { }
-            }
+                JoinedChannel chan = botUser.JoinedChannels.First(x => x.Channel == channel);
+                botUser.SendMessage(chan, message);
+            } catch { }
         }
 
         public bool IsChannelJoined(string channel)
         {
-            return botUser.JoinedChannels.First(x => x.Channel == channel) != null;
+            try
+            {
+                botUser.JoinedChannels.First(x => x.Channel == channel);
+                return true;
+            } catch
+            {
+                return false;
+            }
         }
 
         private void OnConnected(object sender, TwitchLib.Client.Events.OnConnectedArgs e)
@@ -140,15 +144,12 @@ namespace MizuiroBot.Twitch
 
             if (shared != null)
             {
-                KeyValuePair<string, string>? customCommand = shared.CustomCommands.First(x => x.Key == e.Command.CommandText);
-                if (customCommand.HasValue)
+                try
                 {
-                    try
-                    {
-                        botUser.SendMessage(commandChannel, customCommand.Value.Value);
-                    }
-                    catch { }
+                    CustomCommandInfo customCommand = shared.CustomCommands.First(x => x.Key == e.Command.CommandText);
+                    botUser.SendMessage(commandChannel, customCommand.Value);
                 }
+                catch { }
             }
             //switch (e.Command.CommandText)
             //{

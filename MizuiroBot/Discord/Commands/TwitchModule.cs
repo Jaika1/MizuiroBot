@@ -59,7 +59,7 @@ namespace MizuiroBot.Discord.Commands
                 }
             } else
             {
-                await Context.Channel.SendMessageAsync("You haven't told me what Twitch channel this server is associated with yet, dummy! *(pssst! use `!settwitch`!)*");
+                await Context.Channel.SendMessageAsync($"You haven't told me what Twitch channel this server is associated with yet, dummy! *(pssst! use `{Program.Config.CommandPrefix}settwitch`!)*");
             }
         }
     }

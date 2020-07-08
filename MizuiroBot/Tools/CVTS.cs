@@ -112,5 +112,10 @@ namespace MizuiroBot.Tools
         {
             WriteLine(text, Color.FromArgb(107, 147, 255), "Discord");
         }
+
+        public static void WriteLineShared(string text)
+        {
+            WriteLine(text, Color.FromArgb(255, 0, 132), "Shared");
+        }
     }
 }
