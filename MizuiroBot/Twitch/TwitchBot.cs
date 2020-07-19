@@ -52,17 +52,19 @@ namespace MizuiroBot.Twitch
             }
         }
 
-        public void LeaveChannel(string channel)
+        public bool LeaveChannel(string channel)
         {
             try
             {
                 CVTS.WriteLineTwitch($"Leaving channel {channel}...");
                 botUser.LeaveChannel(channel);
                 CVTS.WriteLineTwitch($"Left channel {channel}.");
+                return true;
             }
             catch
             {
                 CVTS.WriteLineTwitch($"Channel {channel} already left!");
+                return false;
             }
         }
 

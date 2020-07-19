@@ -92,6 +92,7 @@ namespace MizuiroBot.Shared
 
         public void RemoveTwitch()
         {
+            Program.TwitchBot.LeaveChannel(TwitchChannelName);
             TwitchChannelName = "";
         }
     }

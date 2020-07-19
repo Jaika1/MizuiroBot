@@ -62,5 +62,23 @@ namespace MizuiroBot.Discord.Commands
                 await Context.Channel.SendMessageAsync($"You haven't told me what Twitch channel this server is associated with yet, dummy! *(pssst! use `{Program.Config.CommandPrefix}settwitch`!)*");
             }
         }
+
+        [Command("parttwitch")]
+        [Summary("Removes the Twitch channel of which is currently associated to this Discord server.")]
+        [RequireOwner()]
+        public async Task PartTwitch()
+        {
+            SharedBotInfo shared = SharedBotInfo.GetSharedInfo(Context.Guild.Id);
+            if (!string.IsNullOrWhiteSpace(shared.TwitchChannelName))
+            {
+                string tChanName = shared.TwitchChannelName;
+                shared.RemoveTwitch();
+                await Context.Channel.SendMessageAsync($"Pooft! This server is no longer associated with `{tChanName}`!");
+            }
+            else
+            {
+                await Context.Channel.SendMessageAsync($"Whoopsie! This server isn't even associated with a Twitch channel in the first place!");
+            }
+        }
     }
 }
