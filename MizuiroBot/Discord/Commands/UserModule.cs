@@ -59,6 +59,10 @@ namespace MizuiroBot.Discord.Commands
             .WithColor(userInfo.GetColor());
             profileEmbed.Description += string.IsNullOrWhiteSpace(userInfo.TwitchChannelName) ? $"Twitch: N/A\n" : $"Twitch: https://www.twitch.tv/{userInfo.TwitchChannelName}\n";
             profileEmbed.Description += string.IsNullOrWhiteSpace(userInfo.SwitchFc) ? $"Switch: N/A\n" : $"Switch: {userInfo.SwitchFc}\n";
+            profileEmbed.AddField(new EmbedFieldBuilder() { Name = "Rainmaker", Value = "N/A" });
+            profileEmbed.AddField(new EmbedFieldBuilder() { Name = "Splat Zones", Value = "N/A" });
+            profileEmbed.AddField(new EmbedFieldBuilder() { Name = "Tower Control", Value = "N/A" });
+            profileEmbed.AddField(new EmbedFieldBuilder() { Name = "Clam Blitz", Value = "N/A" });
             await Context.Channel.SendMessageAsync(embed: profileEmbed.Build());
         }
 
