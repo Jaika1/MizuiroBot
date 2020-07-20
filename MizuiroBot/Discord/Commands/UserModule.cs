@@ -54,8 +54,8 @@ namespace MizuiroBot.Discord.Commands
 
             SharedUserInfo userInfo = SharedUserInfo.GetUserInfo(mentionedUser.Id);
             EmbedBuilder profileEmbed = new EmbedBuilder()
-            .WithTitle(Context.User.Username)
-            .WithThumbnailUrl(Context.User.GetAvatarUrl())
+            .WithTitle(mentionedUser.Username)
+            .WithThumbnailUrl(mentionedUser.GetAvatarUrl())
             .WithColor(userInfo.GetColor());
             profileEmbed.Description += string.IsNullOrWhiteSpace(userInfo.TwitchChannelName) ? $"Twitch: N/A\n" : $"Twitch: https://www.twitch.tv/{userInfo.TwitchChannelName}\n";
             profileEmbed.Description += string.IsNullOrWhiteSpace(userInfo.SwitchFc) ? $"Switch: N/A\n" : $"Switch: {userInfo.SwitchFc}\n";
