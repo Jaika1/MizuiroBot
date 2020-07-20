@@ -3,8 +3,11 @@ using MizuiroBot.Tools;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.Drawing;
 using System.IO;
 using System.Text;
+using Color = Discord.Color;
 
 namespace MizuiroBot.Shared
 {
@@ -103,6 +106,8 @@ namespace MizuiroBot.Shared
 
         public ulong DiscordUserId = 0ul;
         public string TwitchChannelName = "";
+        public string SwitchFc = "";
+        public uint ProfileColor = 0x979C9Fu; // Light Grey
 
         public SharedUserInfo() { }
 
@@ -167,12 +172,57 @@ namespace MizuiroBot.Shared
             if (sharedUserCollection.Find(i => i.TwitchChannelName == twitchChannel) != null) return false;
 
             TwitchChannelName = twitchChannel;
+            SaveUserInfo();
             return true;
         }
 
         public void RemoveTwitch()
         {
             TwitchChannelName = "";
+        }
+
+        public bool SetColor(string hex)
+        {
+            System.Drawing.Color htmlColor;
+            try
+            {
+                htmlColor = ColorTranslator.FromHtml(hex);
+            } catch
+            {
+                return false;
+            }
+            ProfileColor = new Color(htmlColor.R, htmlColor.G, htmlColor.B).RawValue;
+            SaveUserInfo();
+            return true;
+        }
+
+        public Color GetColor()
+        {
+            return new Color(ProfileColor);
+        }
+
+        public bool SetSwitchFc(string code)
+        {
+            code = code.Replace("SW-", null);
+            string[] split = code.Split('-');
+
+            if (split.Length != 3) return false; // Friend codes contain 3 4-digit long sections
+
+            foreach (string s in split)
+            {
+                int o;
+                if (!int.TryParse(s, out o)) return false; // Friend codes do not make use of letters
+            }
+
+            SwitchFc = $"SW-{code}";
+            SaveUserInfo();
+            return true;
+        }
+
+        public void RemoveSwitchFc()
+        {
+            SwitchFc = "";
+            SaveUserInfo();
         }
     }
 
