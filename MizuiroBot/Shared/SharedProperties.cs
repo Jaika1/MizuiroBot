@@ -1,4 +1,5 @@
 ﻿using Discord;
+using MizuiroBot.Splatoon;
 using MizuiroBot.Tools;
 using Newtonsoft.Json;
 using System;
@@ -103,11 +104,12 @@ namespace MizuiroBot.Shared
         private static List<SharedUserInfo> sharedUserCollection = new List<SharedUserInfo>();
         public static List<SharedUserInfo> SharedUsers => sharedUserCollection;
         private const string SharedUserLocation = @".\sharedUserInfo";
-
+        
         public ulong DiscordUserId = 0ul;
         public string TwitchChannelName = "";
         public string SwitchFc = "";
         public uint ProfileColor = 0x979C9Fu; // Light Grey
+        public Splatoon2RankInfo SplatoonData = new Splatoon2RankInfo();
 
         public SharedUserInfo() { }
 
@@ -222,6 +224,56 @@ namespace MizuiroBot.Shared
         public void RemoveSwitchFc()
         {
             SwitchFc = "";
+            SaveUserInfo();
+        }
+
+        public bool SetRainmakerRank(string rank, float? power = null)
+        {
+            rank = rank.ToUpper();
+            if (!Splatoon2RankInfo.IsValidRank(rank)) return false;
+
+            if (power.HasValue && rank == "X") SplatoonData.BestRainmakerPower = power.Value;
+            SplatoonData.RainmakerRank = rank;
+            SaveUserInfo();
+            return true;
+        }
+
+        public bool SetSplatZonesRank(string rank, float? power = null)
+        {
+            rank = rank.ToUpper();
+            if (!Splatoon2RankInfo.IsValidRank(rank)) return false;
+
+            if (power.HasValue && rank == "X") SplatoonData.BestSplatZonesPower = power.Value;
+            SplatoonData.SplatZonesRank = rank;
+            SaveUserInfo();
+            return true;
+        }
+
+        public bool SetTowerControlRank(string rank, float? power = null)
+        {
+            rank = rank.ToUpper();
+            if (!Splatoon2RankInfo.IsValidRank(rank)) return false;
+
+            if (power.HasValue && rank == "X") SplatoonData.BestTowerControlPower = power.Value;
+            SplatoonData.TowerControlRank = rank;
+            SaveUserInfo();
+            return true;
+        }
+
+        public bool SetClamBlitzRank(string rank, float? power = null)
+        {
+            rank = rank.ToUpper();
+            if (!Splatoon2RankInfo.IsValidRank(rank)) return false;
+
+            if (power.HasValue && rank == "X") SplatoonData.BestClamBlitzPower = power.Value;
+            SplatoonData.ClamBlitzRank = rank;
+            SaveUserInfo();
+            return true;
+        }
+
+        public void SetLeaguePower(float power)
+        {
+            SplatoonData.BestLeaguePower = power;
             SaveUserInfo();
         }
     }

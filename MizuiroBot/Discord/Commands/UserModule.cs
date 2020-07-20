@@ -46,7 +46,7 @@ namespace MizuiroBot.Discord.Commands
 
         [Command("profile")]
         [Summary("Displays your own (or somebody elses if specified) profile!")]
-        public async Task Profile(SocketUser mentionedUser = null)
+        public async Task Profile([Summary("A mention of the other users profile you'd like to view.")] SocketUser mentionedUser = null)
         {
             mentionedUser ??= Context.User;
 
@@ -59,16 +59,17 @@ namespace MizuiroBot.Discord.Commands
             .WithColor(userInfo.GetColor());
             profileEmbed.Description += string.IsNullOrWhiteSpace(userInfo.TwitchChannelName) ? $"Twitch: N/A\n" : $"Twitch: https://www.twitch.tv/{userInfo.TwitchChannelName}\n";
             profileEmbed.Description += string.IsNullOrWhiteSpace(userInfo.SwitchFc) ? $"Switch: N/A\n" : $"Switch: {userInfo.SwitchFc}\n";
-            profileEmbed.AddField(new EmbedFieldBuilder() { Name = "Rainmaker", Value = "N/A" });
-            profileEmbed.AddField(new EmbedFieldBuilder() { Name = "Splat Zones", Value = "N/A" });
-            profileEmbed.AddField(new EmbedFieldBuilder() { Name = "Tower Control", Value = "N/A" });
-            profileEmbed.AddField(new EmbedFieldBuilder() { Name = "Clam Blitz", Value = "N/A" });
+            profileEmbed.AddField(new EmbedFieldBuilder() { Name = "Rainmaker", Value = (string.IsNullOrWhiteSpace(userInfo.SplatoonData.RainmakerRank) ? "N/A" : userInfo.SplatoonData.RainmakerRank) + (userInfo.SplatoonData.BestRainmakerPower == 0 ? "" : $" ({userInfo.SplatoonData.BestRainmakerPower} highest power)") });
+            profileEmbed.AddField(new EmbedFieldBuilder() { Name = "Splat Zones", Value = (string.IsNullOrWhiteSpace(userInfo.SplatoonData.SplatZonesRank) ? "N/A" : userInfo.SplatoonData.SplatZonesRank) + (userInfo.SplatoonData.BestSplatZonesPower == 0 ? "" : $" ({userInfo.SplatoonData.BestSplatZonesPower} highest power)") });
+            profileEmbed.AddField(new EmbedFieldBuilder() { Name = "Tower Control", Value = (string.IsNullOrWhiteSpace(userInfo.SplatoonData.TowerControlRank) ? "N/A" : userInfo.SplatoonData.TowerControlRank) + (userInfo.SplatoonData.BestTowerControlPower == 0 ? "" : $" ({userInfo.SplatoonData.BestTowerControlPower} highest power)") });
+            profileEmbed.AddField(new EmbedFieldBuilder() { Name = "Clam Blitz", Value = (string.IsNullOrWhiteSpace(userInfo.SplatoonData.ClamBlitzRank) ? "N/A" : userInfo.SplatoonData.ClamBlitzRank) + (userInfo.SplatoonData.BestClamBlitzPower == 0 ? "" : $" ({userInfo.SplatoonData.BestClamBlitzPower} highest power)") });
+            profileEmbed.AddField(new EmbedFieldBuilder() { Name = "Best League Power", Value = userInfo.SplatoonData.BestLeaguePower == 0 ? "N/A" : userInfo.SplatoonData.BestLeaguePower.ToString() });
             await Context.Channel.SendMessageAsync(embed: profileEmbed.Build());
         }
 
         [Command("color")]
         [Summary("Sets the color to be used for your profile! (Use hex, e.g #RRGGBB)")]
-        public async Task ProfileColor(string hex)
+        public async Task ProfileColor([Summary("A color in HTML/Hexidecimal format. (hint: google 'Color picker')")] string hex)
         {
             SharedUserInfo userInfo = SharedUserInfo.GetUserInfo(Context.User.Id);
             if (userInfo.SetColor(hex))
@@ -110,6 +111,78 @@ namespace MizuiroBot.Discord.Commands
             {
                 await Context.Channel.SendMessageAsync("No Switch friend code has even been assigned to your profile!");
             }
+        }
+
+        [Command("setrainmaker")]
+        [Summary("Updates your current rank in Rainmaker for your profile, and secondarily your highest X power (if applicable)")]
+        public async Task SetRainmaker([Summary("Your current rank in Rainmaker.")] string rank, [Summary("Your highest X power in Rainmaker.")] float? power = null)
+        {
+            SharedUserInfo userInfo = SharedUserInfo.GetUserInfo(Context.User.Id);
+            if (userInfo.SetRainmakerRank(rank, power))
+            {
+                await Context.Channel.SendMessageAsync($"Successfully updated your rank in Rainmaker!");
+            }
+            else
+            {
+                await Context.Channel.SendMessageAsync("Uh-oh! Seems like you've specified a rank that doesn't exist!");
+            }
+        }
+
+        [Command("setzones")]
+        [Alias("setsplatzones")]
+        [Summary("Updates your current rank in Splat Zones for your profile, and secondarily your highest X power (if applicable)")]
+        public async Task SetSplatZones([Summary("Your current rank in Splat Zones.")] string rank, [Summary("Your highest X power in Splat Zones.")] float? power = null)
+        {
+            SharedUserInfo userInfo = SharedUserInfo.GetUserInfo(Context.User.Id);
+            if (userInfo.SetSplatZonesRank(rank, power))
+            {
+                await Context.Channel.SendMessageAsync($"Successfully updated your rank in Splat Zones!");
+            }
+            else
+            {
+                await Context.Channel.SendMessageAsync("Uh-oh! Seems like you've specified a rank that doesn't exist!");
+            }
+        }
+
+        [Command("settc")]
+        [Alias("settower", "settowercontrol")]
+        [Summary("Updates your current rank in Tower Control for your profile, and secondarily your highest X power (if applicable)")]
+        public async Task SetTowerControl([Summary("Your current rank in Tower Control.")] string rank, [Summary("Your highest X power in Tower Control.")] float? power = null)
+        {
+            SharedUserInfo userInfo = SharedUserInfo.GetUserInfo(Context.User.Id);
+            if (userInfo.SetTowerControlRank(rank, power))
+            {
+                await Context.Channel.SendMessageAsync($"Successfully updated your rank in Tower Control!");
+            }
+            else
+            {
+                await Context.Channel.SendMessageAsync("Uh-oh! Seems like you've specified a rank that doesn't exist!");
+            }
+        }
+
+        [Command("setclams")]
+        [Alias("setclamblitz", "setclam")]
+        [Summary("Updates your current rank in Clam Blitz for your profile, and secondarily your highest X power (if applicable)")]
+        public async Task SetClamBlitz([Summary("Your current rank in Clam Blitz.")] string rank, [Summary("Your highest X power in Clam Blitz.")] float? power = null)
+        {
+            SharedUserInfo userInfo = SharedUserInfo.GetUserInfo(Context.User.Id);
+            if (userInfo.SetClamBlitzRank(rank, power))
+            {
+                await Context.Channel.SendMessageAsync($"Successfully updated your rank in Clam Blitz!");
+            }
+            else
+            {
+                await Context.Channel.SendMessageAsync("Uh-oh! Seems like you've specified a rank that doesn't exist!");
+            }
+        }
+
+        [Command("setleague")]
+        [Summary("Updates your highest power in League Battle!")]
+        public async Task SetLeague([Summary("Your highest power in League Battle.")] float power)
+        {
+            SharedUserInfo userInfo = SharedUserInfo.GetUserInfo(Context.User.Id);
+            userInfo.SetLeaguePower(power);
+            await Context.Channel.SendMessageAsync($"Successfully updated your highest league power!");
         }
     }
 }
