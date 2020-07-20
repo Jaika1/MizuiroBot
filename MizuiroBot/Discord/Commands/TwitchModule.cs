@@ -9,7 +9,7 @@ namespace MizuiroBot.Discord.Commands
 {
     public class TwitchModule : ModuleBase<SocketCommandContext>
     {
-        [Command("settwitch")]
+        [Command("settwitchchan")]
         [Summary("Sets the Twitch channel of which is associated to this Discord server. Only 1 server can be linked to a channel at any time.")]
         [RequireOwner()]
         public async Task SetTwitch([Summary("The name of the Twitch channel to link.")] string twitchChannelName)
@@ -33,7 +33,7 @@ namespace MizuiroBot.Discord.Commands
             }
         }
 
-        [Command("jointwitch")]
+        [Command("jointwitchchan")]
         [Summary("A good command if the bot is being stubborn")]
         [RequireOwner()]
         public async Task JoinTwitch()
@@ -63,7 +63,7 @@ namespace MizuiroBot.Discord.Commands
             }
         }
 
-        [Command("parttwitch")]
+        [Command("parttwitchchan")]
         [Summary("Removes the Twitch channel of which is currently associated to this Discord server.")]
         [RequireOwner()]
         public async Task PartTwitch()

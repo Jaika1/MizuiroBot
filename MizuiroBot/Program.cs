@@ -32,6 +32,7 @@ namespace MizuiroBot
             // Load the config and shared info.
             Config = Config.LoadConfig();
             SharedBotInfo.LoadSharedInfo();
+            SharedUserInfo.LoadUserInfo();
             // Initialise both bots 
             DiscordBot.Init();
             TwitchBot.Init(Config.TwitchBotUsername, Config.TwitchOAuth2);
