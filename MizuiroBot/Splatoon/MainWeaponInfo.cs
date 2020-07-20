@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
 namespace MizuiroBot.Splatoon
@@ -90,5 +91,17 @@ namespace MizuiroBot.Splatoon
         /// Defines the <b>internal name</b> for the sub-weapon this weapon comes equipped with. (Not its given name, use the locale functions instead!)
         /// </summary>
         public string Sub = "";
+
+        public string GetName()
+        {
+            try
+            {
+                return Data.EnglishLocale.First(x => x.Key == Name).Value;
+            }
+            catch
+            {
+                return "ERROR!";
+            }
+        }
     }
 }

@@ -18,9 +18,10 @@ namespace MizuiroBot.Splatoon
         private static WebClient webClient = new WebClient();
         private const string s2DataUrl = "https://github.com/Leanny/leanny.github.io/archive/master.zip"; //Keep an eye on this, github will be changing this to 'main.zip' in the future...
         private const string englishLocaleLocation = dataLocation + @"Languages\lang_dict_USen.json";
-        private static Dictionary<string, string> englishLocale = new Dictionary<string, string>();
+        public static Dictionary<string, string> EnglishLocale = new Dictionary<string, string>();
+        private const string mainWeaponLocation = dataLocation + @"Mush\latest\WeaponInfo_Main.json";
 
-        public static MainWeaponInfo[] MainWeapons;
+        public static List<MainWeaponInfo> MainWeapons;
         public static SubWeaponInfo[] SubWeapons;
         public static SpecialWeaponInfo[] SpecialWeapons;
 
@@ -35,18 +36,25 @@ namespace MizuiroBot.Splatoon
             }
 
             #region LOAD IN ALL THE DATA!
-            //Load in the english locale
+            // Load in the english locale
             CVTS.WriteLineInfo("Loading in the en-us locale for the splatoon 2 data...");
-            englishLocale = JsonConvert.DeserializeObject<Dictionary<string, string>>(File.ReadAllText(englishLocaleLocation));
+            EnglishLocale = JsonConvert.DeserializeObject<Dictionary<string, string>>(File.ReadAllText(englishLocaleLocation));
 #if DEBUG
-            foreach (KeyValuePair<string, string> p in englishLocale)
+            foreach (KeyValuePair<string, string> p in EnglishLocale)
                 CVTS.WriteLine($"{p.Key,34}: {p.Value.Replace("\n", "\\n"),100}", Color.FromArgb(0x00, 0xFF, 0x00), "LOCALE");
 #endif
 
-#endregion
+            // Load in the main weapons
+            MainWeapons = JsonConvert.DeserializeObject<List<MainWeaponInfo>>(File.ReadAllText(mainWeaponLocation));
+#if DEBUG
+            foreach (MainWeaponInfo m in MainWeapons)
+                CVTS.WriteLine($"{m.Name,30}: {m.GetName()}", Color.FromArgb(0xFF, 0x00, 0x99), "MAINWEPS");
+#endif
 
-            //Check to see if any weapons have actually been loaded in.
-            if (MainWeapons == null || MainWeapons.Length == 0)
+            #endregion
+
+            // Check to see if any weapons have actually been loaded in.
+            if (MainWeapons == null || MainWeapons.Count == 0)
                 CVTS.WriteLineWarn("No main weapons have been loaded, certain commands will not function correctly.");
             if (SubWeapons == null || SubWeapons.Length == 0)
                 CVTS.WriteLineWarn("No sub weapons have been loaded, certain commands will not function correctly.");
