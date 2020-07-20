@@ -42,6 +42,7 @@ namespace MizuiroBot.Splatoon
             foreach (KeyValuePair<string, string> p in englishLocale)
                 CVTS.WriteLine($"{p.Key,34}: {p.Value.Replace("\n", "\\n"),100}", Color.FromArgb(0x00, 0xFF, 0x00), "LOCALE");
 #endif
+
 #endregion
 
             //Check to see if any weapons have actually been loaded in.
