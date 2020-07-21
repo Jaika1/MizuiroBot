@@ -20,10 +20,11 @@ namespace MizuiroBot.Splatoon
         private const string englishLocaleLocation = dataLocation + @"Languages\lang_dict_USen.json";
         public static Dictionary<string, string> EnglishLocale = new Dictionary<string, string>();
         private const string mainWeaponLocation = dataLocation + @"Mush\latest\WeaponInfo_Main.json";
+        private const string subWeaponLocation = dataLocation + @"Mush\latest\WeaponInfo_Sub.json";
 
         public static List<MainWeaponInfo> MainWeapons;
-        public static SubWeaponInfo[] SubWeapons;
-        public static SpecialWeaponInfo[] SpecialWeapons;
+        public static List<SubWeaponInfo> SubWeapons;
+        public static List<SpecialWeaponInfo> SpecialWeapons;
 
         public static void LoadSplatoon2Data()
         {
@@ -51,14 +52,21 @@ namespace MizuiroBot.Splatoon
                 CVTS.WriteLine($"{m.Name,30}: {m.GetName()}", Color.FromArgb(0xFF, 0x00, 0x99), "MAINWEPS");
 #endif
 
+            // Load in the main weapons
+            SubWeapons = JsonConvert.DeserializeObject<List<SubWeaponInfo>>(File.ReadAllText(subWeaponLocation));
+#if DEBUG
+            foreach (SubWeaponInfo m in SubWeapons)
+                CVTS.WriteLine($"{m.Name,30}: {m.GetName()}", Color.FromArgb(0xFF, 0x77, 0x99), "SUBWEPS");
+#endif
+
             #endregion
 
             // Check to see if any weapons have actually been loaded in.
             if (MainWeapons == null || MainWeapons.Count == 0)
                 CVTS.WriteLineWarn("No main weapons have been loaded, certain commands will not function correctly.");
-            if (SubWeapons == null || SubWeapons.Length == 0)
+            if (SubWeapons == null || SubWeapons.Count == 0)
                 CVTS.WriteLineWarn("No sub weapons have been loaded, certain commands will not function correctly.");
-            if (SpecialWeapons == null || SpecialWeapons.Length == 0)
+            if (SpecialWeapons == null || SpecialWeapons.Count == 0)
                 CVTS.WriteLineWarn("No special weapons have been loaded, certain commands will not function correctly.");
             CVTS.WriteLineOk("Finished aquiring all Splatoon 2 data.");
         }
