@@ -21,6 +21,7 @@ namespace MizuiroBot.Splatoon
         public static Dictionary<string, string> EnglishLocale = new Dictionary<string, string>();
         private const string mainWeaponLocation = dataLocation + @"Mush\latest\WeaponInfo_Main.json";
         private const string subWeaponLocation = dataLocation + @"Mush\latest\WeaponInfo_Sub.json";
+        private const string specialWeaponLocation = dataLocation + @"Mush\latest\WeaponInfo_Special.json";
 
         public static List<MainWeaponInfo> MainWeapons;
         public static List<SubWeaponInfo> SubWeapons;
@@ -52,13 +53,19 @@ namespace MizuiroBot.Splatoon
                 CVTS.WriteLine($"{m.Name,30}: {m.GetName()}", Color.FromArgb(0xFF, 0x00, 0x99), "MAINWEPS");
 #endif
 
-            // Load in the main weapons
+            // Load in the sub weapons
             SubWeapons = JsonConvert.DeserializeObject<List<SubWeaponInfo>>(File.ReadAllText(subWeaponLocation));
 #if DEBUG
             foreach (SubWeaponInfo m in SubWeapons)
                 CVTS.WriteLine($"{m.Name,30}: {m.GetName()}", Color.FromArgb(0xFF, 0x77, 0x99), "SUBWEPS");
 #endif
 
+            // Load in the special weapons
+            SpecialWeapons = JsonConvert.DeserializeObject<List<SpecialWeaponInfo>>(File.ReadAllText(specialWeaponLocation));
+#if DEBUG
+            foreach (SpecialWeaponInfo m in SpecialWeapons)
+                CVTS.WriteLine($"{m.Name,30}: {m.GetName()}", Color.FromArgb(0xFF, 0xCC, 0x99), "SPECIALS");
+#endif
             #endregion
 
             // Check to see if any weapons have actually been loaded in.

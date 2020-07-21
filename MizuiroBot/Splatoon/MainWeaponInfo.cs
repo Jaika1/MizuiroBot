@@ -103,5 +103,28 @@ namespace MizuiroBot.Splatoon
                 return "ERROR!";
             }
         }
+
+        public SubWeaponInfo GetSubWeapon()
+        {
+            try
+            {
+                return Data.SubWeapons.First(x => x.Name == Sub);
+            } catch
+            {
+                return null;
+            }
+        }
+
+        public SpecialWeaponInfo GetSpecialWeapon()
+        {
+            try
+            {
+                return Data.SpecialWeapons.First(x => x.Name == Special);
+            }
+            catch
+            {
+                return null;
+            }
+        }
     }
 }

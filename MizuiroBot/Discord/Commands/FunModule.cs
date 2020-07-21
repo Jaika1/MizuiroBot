@@ -22,7 +22,7 @@ namespace MizuiroBot.Discord.Commands
                                                            where w.Rank <= level
                                                            select w;
             MainWeaponInfo randomWeapon = availableWeapons.ElementAt(random.Next(availableWeapons.Count()));
-            await Context.Channel.SendMessageAsync($"Through a process of pseudo-random selection, I've determined that the `{randomWeapon.GetName()}` is the weapon for you at this current moment!");
+            await Context.Channel.SendMessageAsync($"Through a process of pseudo-random selection, I've determined that the `{randomWeapon.GetName()}` is the weapon for you! This kit comes equiped with the `{randomWeapon.GetSubWeapon().GetName()}` sub-weapon and has the `{randomWeapon.GetSpecialWeapon().GetName()}` for its special!");
         }
     }
 }
