@@ -1,6 +1,10 @@
-﻿using System;
+﻿using Discord;
+using Discord.WebSocket;
+using MizuiroBot.Tools;
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Text;
 
 namespace MizuiroBot.Splatoon
@@ -102,6 +106,47 @@ namespace MizuiroBot.Splatoon
             {
                 return "ERROR!";
             }
+        }
+
+        public string GetImageUrl()
+        {
+            return $"https://leanny.github.io/splat2/weapons/Wst_{Name}.png";
+        }
+
+        public Embed GetDiscordEmbed(out GuildEmote subEmote, out GuildEmote specialEmote, SocketGuild guild)
+        {
+            try
+            {
+                Image img = new Image(WebRequest.Create(GetSubWeapon().GetImageUrl()).GetResponse().GetResponseStream());
+                subEmote = guild.CreateEmoteAsync(Name, img).GetAwaiter().GetResult();
+            }
+            catch
+            {
+                subEmote = null;
+            }
+
+            try
+            {
+                Image img = new Image(WebRequest.Create(GetSpecialWeapon().GetImageUrl()).GetResponse().GetResponseStream());
+                specialEmote = guild.CreateEmoteAsync(Name, img).GetAwaiter().GetResult();
+            }
+            catch
+            {
+                specialEmote = null;
+            }
+
+            Embed eb = new EmbedBuilder()
+                .WithTitle(GetName())
+                .WithThumbnailUrl(GetImageUrl())
+                .WithColor(new Color(0x00, 0xFF, 0x00))
+                .AddField("Sub Weapon", (subEmote==null ? "" : $"{subEmote} ") + $"*{GetSubWeapon().GetName()}*")
+                .AddField("Special", (specialEmote == null ? "" : $"{specialEmote} ") + $"*{GetSpecialWeapon().GetName()}*")
+                .AddField(Data.EnglishLocale.First(x => x.Key == Param0).Value, $"{ASCIIUI.CreateTextBar(ParamValue0, 100)} **[{ParamValue0}/100]**")
+                .AddField(Data.EnglishLocale.First(x => x.Key == Param1).Value, $"{ASCIIUI.CreateTextBar(ParamValue1, 100)} **[{ParamValue1}/100]**")
+                .AddField(Data.EnglishLocale.First(x => x.Key == Param2).Value, $"{ASCIIUI.CreateTextBar(ParamValue2, 100)} **[{ParamValue2}/100]**")
+                .Build();
+
+            return eb;
         }
 
         public SubWeaponInfo GetSubWeapon()

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Discord;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -30,6 +31,20 @@ namespace MizuiroBot.Splatoon
             {
                 return "ERROR!";
             }
+        }
+
+        public string GetImageUrl()
+        {
+            return $"https://leanny.github.io/splat2/subspe/Wsb_{Name}.png";
+        }
+
+        public Embed GetDiscordEmbed()
+        {
+            return new EmbedBuilder()
+                .WithTitle(GetName())
+                .WithThumbnailUrl(GetImageUrl())
+                .WithColor(new Color(0xFF, 0x00, 0x90))
+                .Build();
         }
     }
 }
