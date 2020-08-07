@@ -110,6 +110,7 @@ namespace MizuiroBot.Shared
         public string SwitchFc = "";
         public uint ProfileColor = 0x979C9Fu; // Light Grey
         public Splatoon2RankInfo SplatoonData = new Splatoon2RankInfo();
+        public LocaleSetting Locale = LocaleSetting.English;
 
         public SharedUserInfo() { }
 
@@ -276,11 +277,33 @@ namespace MizuiroBot.Shared
             SplatoonData.BestLeaguePower = power;
             SaveUserInfo();
         }
+
+        public bool SetLocale(string locale)
+        {
+            if (Enum.TryParse(locale, true, out Locale))
+            {
+                SaveUserInfo();
+                return true;
+            }
+            return false;
+        }
     }
 
     public class CustomCommandInfo
     {
         public string Key;
         public string Value;
+    }
+
+    public enum LocaleSetting
+    {
+        English,
+        Deutsche,   // German
+        Espanol,    // Spanish
+        Francais,   // French
+        Italiano,   // Italian
+        Nederlands, // Dutch
+        Russkiy,    // Russian
+        Nihongo,    // Japanese
     }
 }

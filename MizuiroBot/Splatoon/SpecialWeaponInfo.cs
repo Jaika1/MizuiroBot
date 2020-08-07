@@ -1,4 +1,5 @@
 ﻿using Discord;
+using MizuiroBot.Shared;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -17,11 +18,11 @@ namespace MizuiroBot.Splatoon
         /// </summary>
         public string Name = "";
 
-        public string GetName()
+        public string GetName(LocaleSetting locale)
         {
             try
             {
-                return Data.EnglishLocale.First(x => x.Key == Name).Value;
+                return Data.Locales[(int)locale].First(x => x.Key == Name).Value;
             }
             catch
             {
@@ -34,10 +35,10 @@ namespace MizuiroBot.Splatoon
             return $"https://leanny.github.io/splat2/subspe/Wsp_{Name}.png";
         }
 
-        public Embed GetDiscordEmbed()
+        public Embed GetDiscordEmbed(LocaleSetting locale)
         {
             return new EmbedBuilder()
-                .WithTitle(GetName())
+                .WithTitle(GetName(locale))
                 .WithThumbnailUrl(GetImageUrl())
                 .WithColor(new Color(0xFF, 0x90, 0x00))
                 .Build();

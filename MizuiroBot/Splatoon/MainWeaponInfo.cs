@@ -1,5 +1,6 @@
 ﻿using Discord;
 using Discord.WebSocket;
+using MizuiroBot.Shared;
 using MizuiroBot.Tools;
 using System;
 using System.Collections.Generic;
@@ -96,11 +97,11 @@ namespace MizuiroBot.Splatoon
         /// </summary>
         public string Sub = "";
 
-        public string GetName()
+        public string GetName(LocaleSetting locale)
         {
             try
             {
-                return Data.EnglishLocale.First(x => x.Key == Name).Value;
+                return Data.Locales[(int)locale].First(x => x.Key == Name).Value;
             }
             catch
             {
@@ -113,7 +114,7 @@ namespace MizuiroBot.Splatoon
             return $"https://leanny.github.io/splat2/weapons/Wst_{Name}.png";
         }
 
-        public Embed GetDiscordEmbed(out GuildEmote subEmote, out GuildEmote specialEmote, SocketGuild guild)
+        public Embed GetDiscordEmbed(LocaleSetting locale, out GuildEmote subEmote, out GuildEmote specialEmote, SocketGuild guild)
         {
             try
             {
@@ -136,14 +137,14 @@ namespace MizuiroBot.Splatoon
             }
 
             Embed eb = new EmbedBuilder()
-                .WithTitle(GetName())
+                .WithTitle(GetName(locale))
                 .WithThumbnailUrl(GetImageUrl())
                 .WithColor(new Color(0x00, 0xFF, 0x00))
-                .AddField("Sub Weapon", (subEmote==null ? "" : $"{subEmote} ") + $"*{GetSubWeapon().GetName()}*")
-                .AddField("Special", (specialEmote == null ? "" : $"{specialEmote} ") + $"*{GetSpecialWeapon().GetName()}*")
-                .AddField(Data.EnglishLocale.First(x => x.Key == Param0).Value, $"{ASCIIUI.CreateTextBar(ParamValue0, 100)} **[{ParamValue0}/100]**")
-                .AddField(Data.EnglishLocale.First(x => x.Key == Param1).Value, $"{ASCIIUI.CreateTextBar(ParamValue1, 100)} **[{ParamValue1}/100]**")
-                .AddField(Data.EnglishLocale.First(x => x.Key == Param2).Value, $"{ASCIIUI.CreateTextBar(ParamValue2, 100)} **[{ParamValue2}/100]**")
+                .AddField("Sub Weapon", (subEmote==null ? "" : $"{subEmote} ") + $"*{GetSubWeapon().GetName(locale)}*")
+                .AddField("Special", (specialEmote == null ? "" : $"{specialEmote} ") + $"*{GetSpecialWeapon().GetName(locale)}*")
+                .AddField(Data.Locales[(int)locale].First(x => x.Key == Param0).Value, $"{ASCIIUI.CreateTextBar(ParamValue0, 100)} **[{ParamValue0}/100]**")
+                .AddField(Data.Locales[(int)locale].First(x => x.Key == Param1).Value, $"{ASCIIUI.CreateTextBar(ParamValue1, 100)} **[{ParamValue1}/100]**")
+                .AddField(Data.Locales[(int)locale].First(x => x.Key == Param2).Value, $"{ASCIIUI.CreateTextBar(ParamValue2, 100)} **[{ParamValue2}/100]**")
                 .Build();
 
             return eb;

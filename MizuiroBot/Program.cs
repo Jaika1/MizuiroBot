@@ -35,10 +35,10 @@ namespace MizuiroBot
             SharedUserInfo.LoadUserInfo();
             // Initialise both bots 
             DiscordBot.Init();
-            //TwitchBot.Init(Config.TwitchBotUsername, Config.TwitchOAuth2);
+            TwitchBot.Init(Config.TwitchBotUsername, Config.TwitchOAuth2);
             // Start both bots
             _ = DiscordBot.StartBot(Config.DiscordBotToken); // Needs discard token '_' since this function is asyncronous.
-            //TwitchBot.Start();
+            TwitchBot.Start();
             // Sleep the thread indefinitely to stop it from closing.
             Thread.Sleep(-1);
         }

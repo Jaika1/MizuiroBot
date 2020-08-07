@@ -184,5 +184,20 @@ namespace MizuiroBot.Discord.Commands
             userInfo.SetLeaguePower(power);
             await Context.Channel.SendMessageAsync($"Successfully updated your highest league power!");
         }
+
+        [Command("locale")]
+        [Summary("Sets your preffered locale to use where applicable.")]
+        public async Task SetLocale([Summary("The name of the locale.")] string locale)
+        {
+            SharedUserInfo userInfo = SharedUserInfo.GetUserInfo(Context.User.Id);
+            if (userInfo.SetLocale(locale))
+            {
+                await Context.Channel.SendMessageAsync($"Your locale was updated successfully.");
+            }
+            else
+            {
+                await Context.Channel.SendMessageAsync("That locale wasn't found!");
+            }
+        }
     }
 }
