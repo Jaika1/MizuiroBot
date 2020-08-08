@@ -3,7 +3,7 @@ using MizuiroBot.Discord;
 using MizuiroBot.Shared;
 using MizuiroBot.Splatoon;
 using MizuiroBot.Tools;
-using MizuiroBot.Twitch;
+using AsyncTwitchLib;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -13,6 +13,7 @@ using System.Linq;
 using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Threading;
+using System.Threading.Tasks;
 
 namespace MizuiroBot
 {
@@ -20,7 +21,7 @@ namespace MizuiroBot
     {
         public static Config Config;
         public static DiscordBot DiscordBot = new DiscordBot();
-        public static TwitchBot TwitchBot = new TwitchBot();
+        public static TwitchClient TwitchBot = new TwitchClient();
 
         static void Main(string[] args)
         {
@@ -35,10 +36,9 @@ namespace MizuiroBot
             SharedUserInfo.LoadUserInfo();
             // Initialise both bots 
             DiscordBot.Init();
-            TwitchBot.Init(Config.TwitchBotUsername, Config.TwitchOAuth2);
+            TwitchBot.Connect(Config.TwitchBotUsername, Config.TwitchOAuth2).GetAwaiter().GetResult();
             // Start both bots
             _ = DiscordBot.StartBot(Config.DiscordBotToken); // Needs discard token '_' since this function is asyncronous.
-            TwitchBot.Start();
             // Sleep the thread indefinitely to stop it from closing.
             Thread.Sleep(-1);
         }

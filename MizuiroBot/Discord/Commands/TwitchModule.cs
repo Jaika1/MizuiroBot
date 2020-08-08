@@ -1,4 +1,5 @@
-﻿using Discord.Commands;
+﻿using AsyncTwitchLib;
+using Discord.Commands;
 using MizuiroBot.Shared;
 using System;
 using System.Collections.Generic;
@@ -15,9 +16,11 @@ namespace MizuiroBot.Discord.Commands
         public async Task SetTwitch([Summary("The name of the Twitch channel to link.")] string twitchChannelName)
         {
             SharedBotInfo shared = SharedBotInfo.GetSharedInfo(Context.Guild.Id);
-            if (shared.SetTwitch(twitchChannelName))
+            if (await shared.SetTwitch(twitchChannelName))
             {
-                if (Program.TwitchBot.JoinChannel(twitchChannelName))
+                await Program.TwitchBot.JoinChannel(twitchChannelName);
+                await Task.Delay(1000);
+                if (Program.TwitchBot.GetChannel(twitchChannelName) != null)
                 {
                     await Context.Channel.SendMessageAsync("I've found your channel and sent you a friendly little hello message! Can you see me over in Twitch-land?");
                 }
@@ -41,14 +44,17 @@ namespace MizuiroBot.Discord.Commands
             SharedBotInfo shared = SharedBotInfo.GetSharedInfo(Context.Guild.Id);
             if (!string.IsNullOrWhiteSpace(shared.TwitchChannelName))
             {
-                if (Program.TwitchBot.IsChannelJoined(shared.TwitchChannelName))
+                TwitchChannel chan = Program.TwitchBot.GetChannel(shared.TwitchChannelName);
+                if (chan != null)
                 {
-                    Program.TwitchBot.SendToChannel("Boo!", shared.TwitchChannelName);
+                    await chan.SendChatMessage("Boo!");
                     await Context.Channel.SendMessageAsync("No need for me to rejoin, I'm already there! Can you see me over in Twitch-land?");
                 }
                 else
                 {
-                    if (Program.TwitchBot.JoinChannel(shared.TwitchChannelName))
+                    await Program.TwitchBot.JoinChannel(shared.TwitchChannelName);
+                    await Task.Delay(1000);
+                    if (Program.TwitchBot.GetChannel(shared.TwitchChannelName) != null)
                     {
                         await Context.Channel.SendMessageAsync("Figure that, I was able to join your Twitch channel this time! Can you see me over in Twitch-land?");
                     }

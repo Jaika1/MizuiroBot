@@ -28,7 +28,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Twitch\Commands\" />
+    <ProjectReference Include="..\AsyncTwitchLib\AsyncTwitchLib.csproj" />
   </ItemGroup>
 
 </Project>

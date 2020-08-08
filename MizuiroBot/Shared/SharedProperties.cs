@@ -1,4 +1,5 @@
-﻿using Discord;
+﻿using AsyncTwitchLib;
+using Discord;
 using MizuiroBot.Splatoon;
 using MizuiroBot.Tools;
 using Newtonsoft.Json;
@@ -8,6 +9,7 @@ using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Text;
+using System.Threading.Tasks;
 using Color = Discord.Color;
 
 namespace MizuiroBot.Shared
@@ -79,23 +81,30 @@ namespace MizuiroBot.Shared
             return sharedInfoCollection.Find(i => i.TwitchChannelName == twitchChannel);
         }
 
-        public bool SetTwitch(string twitchChannel)
+        public async Task<bool> SetTwitch(string twitchChannel)
         {
             // Return false if another shared info already references this channel. 
             if (sharedInfoCollection.Find(i => i.TwitchChannelName == twitchChannel) != null) return false;
 
-            if (Program.TwitchBot.IsChannelJoined(TwitchChannelName))
+            TwitchChannel chan = Program.TwitchBot.GetChannel(TwitchChannelName);
+
+            if (chan != null)
             {
-                Program.TwitchBot.LeaveChannel(TwitchChannelName);
+                await Program.TwitchBot.PartChannel(chan);
             }
             TwitchChannelName = twitchChannel;
             return true;
         }
 
-        public void RemoveTwitch()
+        public async Task RemoveTwitch()
         {
-            Program.TwitchBot.LeaveChannel(TwitchChannelName);
-            TwitchChannelName = "";
+            TwitchChannel chan = Program.TwitchBot.GetChannel(TwitchChannelName);
+
+            if (chan != null)
+            {
+                await Program.TwitchBot.PartChannel(chan);
+                TwitchChannelName = "";
+            }
         }
     }
 

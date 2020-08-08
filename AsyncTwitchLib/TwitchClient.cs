@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using System.Reflection.Metadata.Ecma335;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -48,6 +49,16 @@ namespace AsyncTwitchLib
             await client.JoinChannel(channel);
         }
 
+        public TwitchChannel GetChannel(string channel)
+        {
+            return client.GetChannel(channel);
+        }
+
+        public async Task PartChannel(TwitchChannel channel)
+        {
+            await client.PartChannel(channel.Channel);
+        }
+
         private Task ChatMessageReceived(object sender, ChatMessageReceivedEventArgs e)
         {
             Console.WriteLine($"{e.Channel.Channel,-24}{e.User,-24}{e.Content}");
@@ -69,7 +80,29 @@ namespace AsyncTwitchLib
                     tcm.Channel = channel;
                     tcm.Client = tcl;
 
-                    m.Invoke(tcm, null);
+                    object[] paramaters = new object[m.GetParameters().Length];
+
+                    for (int i = 0; i < m.GetParameters().Length; ++i)
+                    {
+                        ParameterInfo p = m.GetParameters()[i];
+                        Type t = p.ParameterType;
+                        
+
+                        switch (t.Name)
+                        {
+                            case "String":
+                                paramaters[i] = split[i + 1];
+                                break;
+                            case "String[]":
+                                paramaters[i] = split.Skip(i + 1).ToArray();
+                                break;
+                            case "Int32":
+                                paramaters[i] = int.Parse(split[i + 1]);
+                                break;
+                        }
+                    }
+
+                    m.Invoke(tcm, paramaters);
                 }
             }
             return Task.CompletedTask;
