@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Net;
 using System.Text;
+using System.Threading.Channels;
 using System.Threading.Tasks;
 
 namespace AsyncTwitchLib
@@ -12,6 +13,12 @@ namespace AsyncTwitchLib
         private string authToken;
 
         private IrcClient ircClient;
+        private List<TwitchChannel> joinedChannels = new List<TwitchChannel>();
+
+        public delegate Task ChatMessageReceivedEvent(object sender, ChatMessageReceivedEventArgs e);
+        public event ChatMessageReceivedEvent ChatMessageReceived;
+        public delegate Task ChannelJoinedEvent(object sender, ChannelJoinedEventArgs e);
+        public event ChannelJoinedEvent ChannelJoined;
 
         public TwitchIrcClient()
         {
@@ -25,7 +32,6 @@ namespace AsyncTwitchLib
             this.authToken = authToken;
 
             await ircClient.Connect("irc.chat.twitch.tv", 6667, username, $"oauth:{authToken}");
-            _ = PingLoop();
         }
 
         public async Task JoinChannel(string channel)
@@ -35,21 +41,64 @@ namespace AsyncTwitchLib
 
         public async Task SendChatMessage(string msg, string channel)
         {
-            await ircClient.SendIrcMessage($":{username}!{username}@{username}.tmi.twitch.tv PRIVMSG #{channel} :{msg}");
+            await ircClient.SendIrcMessage($"PRIVMSG #{channel} :{msg}");
         }
 
-        private async Task PingLoop()
+        public TwitchChannel GetChannel(string channelName)
         {
-            while (true)
+            return joinedChannels.Exists(x => x.Channel == channelName) ? joinedChannels.Find(x => x.Channel == channelName) : null;
+        }
+
+        public async Task PartChannel(string channel)
+        {
+            await ircClient.SendIrcMessage($"PART #{channel}");
+            if (joinedChannels.Exists(x => x.Channel == channel)) joinedChannels.Remove(joinedChannels.Find(x => x.Channel == channel));
+        }
+
+        private async Task IrcMessageReceived(object sender, IrcMessageRecievedEventArgs e)
+        {
+            Console.WriteLine($"{e.Prefix,-64}{e.Command,-16}{e.Parameters}");
+            switch (e.Command) 
             {
-                await ircClient.SendIrcMessage("PING irc.twitch.tv");
-                await Task.Delay(TimeSpan.FromMinutes(5));
+                case "PING":
+                    await ircClient.SendIrcMessage("PONG :tmi.twitch.tv");
+                    break;
+                case "PRIVMSG":
+                    ChatMessageReceived?.Invoke(this, new ChatMessageReceivedEventArgs(this, e.Prefix, e.Parameters));
+                    break;
+                case "JOIN":
+                    TwitchChannel channel = new TwitchChannel(e.Parameters.Replace("#", null), this);
+                    joinedChannels.Add(channel);
+                    ChannelJoined?.Invoke(this, new ChannelJoinedEventArgs(channel));
+                    break;
             }
         }
+    }
 
-        private void IrcMessageReceived(object sender, string message)
+    public struct ChatMessageReceivedEventArgs
+    {
+        public readonly string Content;
+        public readonly TwitchChannel Channel;
+        public readonly string User;
+        public readonly string IrcUser;
+
+        public ChatMessageReceivedEventArgs(TwitchIrcClient client, string prefix, string param)
         {
-            Console.WriteLine(message);
+            IrcUser = prefix;
+            User = prefix.Remove(prefix.IndexOf('!'));
+            string[] paramSplit = param.Split(" :");
+            Channel = client.GetChannel(paramSplit[0].Replace("#", null));
+            Content = paramSplit[1];
+        }
+    }
+
+    public struct ChannelJoinedEventArgs
+    {
+        public readonly TwitchChannel Channel;
+
+        public ChannelJoinedEventArgs(TwitchChannel chan)
+        {
+            Channel = chan;
         }
     }
 }

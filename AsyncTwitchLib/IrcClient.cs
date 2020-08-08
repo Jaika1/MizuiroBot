@@ -14,7 +14,7 @@ namespace AsyncTwitchLib
         private StreamReader inStream;
         private StreamWriter outStream;
 
-        public delegate void IrcMessageRecievedEvent(object sender, string message);
+        public delegate Task IrcMessageRecievedEvent(object sender, IrcMessageRecievedEventArgs e);
         public event IrcMessageRecievedEvent IrcMessageReceived;
 
         /// <summary>
@@ -52,23 +52,48 @@ namespace AsyncTwitchLib
         {
             while (true)
             {
-                //if (!inStream.EndOfStream)
-                //{
                 string msg = await inStream.ReadLineAsync();
-                IrcMessageReceived?.Invoke(this, msg);
-                //}
-                //else
-                //{
-                //    await Task.Delay(10);
-                //}
+                IrcMessageReceived?.Invoke(this, new IrcMessageRecievedEventArgs(msg));
             }
         }
     }
 
-    public class IrcMessageReceivedEventArgs // This comes tomorrow
+    public struct IrcMessageRecievedEventArgs
     {
-        //string source;
-        //string messageId;
-        //string user;
+        public readonly string RawMessage;
+        public readonly string Prefix;
+        public readonly string Command;
+        public readonly string Parameters;
+
+        internal IrcMessageRecievedEventArgs(string raw)
+        {
+            RawMessage = raw;
+
+            if (raw.StartsWith(":"))
+            {
+                int preIndex = raw.IndexOf(' ');
+                int cmdIndex = raw.IndexOf(' ', preIndex + 1);
+
+                Prefix = raw.Substring(0, preIndex).Replace(":", null);
+                Command = raw.Substring(preIndex + 1, cmdIndex - preIndex - 1);
+                Parameters = raw.Substring(cmdIndex + 1);
+            } else
+            {
+                int cmdIndex = raw.IndexOf(' ');
+
+                Prefix = "";
+                Command = raw.Substring(0, cmdIndex);
+                Parameters = raw.Substring(cmdIndex + 1);
+            }
+
+        }
+
+        internal IrcMessageRecievedEventArgs(string raw, string pre, string cmd, string param)
+        {
+            RawMessage = raw;
+            Prefix = pre;
+            Command = cmd;
+            Parameters = param;
+        }
     }
 }
