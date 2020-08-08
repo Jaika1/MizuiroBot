@@ -7,6 +7,10 @@ using System.Threading.Tasks;
 
 namespace AsyncTwitchLib
 {
+    public delegate Task ChatMessageReceivedEvent(object sender, ChatMessageReceivedEventArgs e);
+    public delegate Task ChannelJoinedEvent(object sender, ChannelJoinedEventArgs e);
+    public delegate Task ConnectedEvent(object sender);
+
     public class TwitchIrcClient
     {
         private string username;
@@ -15,10 +19,9 @@ namespace AsyncTwitchLib
         private IrcClient ircClient;
         private List<TwitchChannel> joinedChannels = new List<TwitchChannel>();
 
-        public delegate Task ChatMessageReceivedEvent(object sender, ChatMessageReceivedEventArgs e);
         public event ChatMessageReceivedEvent ChatMessageReceived;
-        public delegate Task ChannelJoinedEvent(object sender, ChannelJoinedEventArgs e);
         public event ChannelJoinedEvent ChannelJoined;
+        public event ConnectedEvent Connected;
 
         public TwitchIrcClient()
         {
@@ -57,9 +60,12 @@ namespace AsyncTwitchLib
 
         private async Task IrcMessageReceived(object sender, IrcMessageRecievedEventArgs e)
         {
-            Console.WriteLine($"{e.Prefix,-64}{e.Command,-16}{e.Parameters}");
+            //Console.WriteLine($"{e.Prefix,-64}{e.Command,-16}{e.Parameters}");
             switch (e.Command) 
             {
+                case "001":
+                    Connected?.Invoke(this);
+                    break;
                 case "PING":
                     await ircClient.SendIrcMessage("PONG :tmi.twitch.tv");
                     break;

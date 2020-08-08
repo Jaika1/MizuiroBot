@@ -36,11 +36,36 @@ namespace MizuiroBot
             SharedUserInfo.LoadUserInfo();
             // Initialise both bots 
             DiscordBot.Init();
-            TwitchBot.Connect(Config.TwitchBotUsername, Config.TwitchOAuth2).GetAwaiter().GetResult();
+            TwitchBot.ChannelJoined += TwitchBot_ChannelJoined;
+            TwitchBot.Connected += TwitchBot_Connected;
             // Start both bots
             _ = DiscordBot.StartBot(Config.DiscordBotToken); // Needs discard token '_' since this function is asyncronous.
+            _ = TwitchBot.Connect(Config.TwitchBotUsername, Config.TwitchOAuth2);
             // Sleep the thread indefinitely to stop it from closing.
             Thread.Sleep(-1);
+        }
+
+        private static async Task TwitchBot_Connected(object sender)
+        {
+            CVTS.WriteLineTwitch("Joining all specified channels in shared channel info...");
+            foreach (SharedBotInfo shared in SharedBotInfo.SharedInfo)
+            {
+                if (!string.IsNullOrWhiteSpace(shared.TwitchChannelName))
+                {
+                    CVTS.WriteLineTwitch($"Joining {shared.TwitchChannelName}...");
+                    await TwitchBot.JoinChannel(shared.TwitchChannelName);
+                }
+                else
+                {
+                    CVTS.WriteLineTwitch($"Channel not found in shared info.");
+                }
+            }
+            CVTS.WriteLineOk("Twitch bot started successfully!");
+        }
+
+        private static async Task TwitchBot_ChannelJoined(object sender, ChannelJoinedEventArgs e)
+        {
+            await e.Channel.SendChatMessage("I'm alive, yippe!");
         }
     }
 }

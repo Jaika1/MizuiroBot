@@ -14,10 +14,15 @@ namespace AsyncTwitchLib
         private char prefixChar = '!';
         private Dictionary<string, MethodInfo> commandList = new Dictionary<string, MethodInfo>();
 
+        public event ChannelJoinedEvent ChannelJoined;
+        public event ConnectedEvent Connected;
+
         public TwitchClient()
         {
             client = new TwitchIrcClient();
             client.ChatMessageReceived += ChatMessageReceived;
+            client.ChannelJoined += Client_ChannelJoined;
+            client.Connected += Client_Connected;
 
             Assembly asm = Assembly.GetEntryAssembly();
             IEnumerable<Type> commandModules = from t in asm.GetTypes()
@@ -61,8 +66,20 @@ namespace AsyncTwitchLib
 
         private Task ChatMessageReceived(object sender, ChatMessageReceivedEventArgs e)
         {
-            Console.WriteLine($"{e.Channel.Channel,-24}{e.User,-24}{e.Content}");
+            //Console.WriteLine($"{e.Channel.Channel,-24}{e.User,-24}{e.Content}");
             TryProcessCommand(this, e.Channel, e.Content);
+            return Task.CompletedTask;
+        }
+
+        private Task Client_ChannelJoined(object sender, ChannelJoinedEventArgs e)
+        {
+            ChannelJoined?.Invoke(this, e);
+            return Task.CompletedTask;
+        }
+
+        private Task Client_Connected(object sender)
+        {
+            Connected?.Invoke(this);
             return Task.CompletedTask;
         }
 
@@ -80,25 +97,32 @@ namespace AsyncTwitchLib
                     tcm.Channel = channel;
                     tcm.Client = tcl;
 
-                    object[] paramaters = new object[m.GetParameters().Length];
+                    int parametersLength = m.GetParameters().Length;
 
-                    for (int i = 0; i < m.GetParameters().Length; ++i)
+                    object[] paramaters = new object[parametersLength];
+
+                    for (int i = 0; i < parametersLength; ++i)
                     {
                         ParameterInfo p = m.GetParameters()[i];
                         Type t = p.ParameterType;
-                        
 
-                        switch (t.Name)
+                        if (i < parametersLength) {
+                            switch (t.Name)
+                            {
+                                case "String":
+                                    paramaters[i] = split[i + 1];
+                                    break;
+                                case "String[]":
+                                    paramaters[i] = split.Skip(i + 1).ToArray();
+                                    break;
+                                case "Int32":
+                                    paramaters[i] = int.Parse(split[i + 1]);
+                                    break;
+                            }
+                        }
+                        else
                         {
-                            case "String":
-                                paramaters[i] = split[i + 1];
-                                break;
-                            case "String[]":
-                                paramaters[i] = split.Skip(i + 1).ToArray();
-                                break;
-                            case "Int32":
-                                paramaters[i] = int.Parse(split[i + 1]);
-                                break;
+                            paramaters[i] = p.DefaultValue;
                         }
                     }
 
