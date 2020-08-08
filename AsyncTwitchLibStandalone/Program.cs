@@ -11,16 +11,10 @@ namespace AsyncTwitchLibStandalone
         static async Task Main(string[] args)
         {
             TwitchCreds credentials = JsonConvert.DeserializeObject<TwitchCreds>(File.ReadAllText(@"Config.json"));
-            TwitchIrcClient client = new TwitchIrcClient();
-            client.ChatMessageReceived += Client_ChatMessageReceived;
+            TwitchClient client = new TwitchClient();
             await client.Connect(credentials.TwitchBotUsername, credentials.TwitchOAuth2);
             await client.JoinChannel("jaika1");
             await Task.Delay(-1);
-        }
-
-        private static async Task Client_ChatMessageReceived(object sender, ChatMessageReceivedEventArgs e)
-        {
-            Console.WriteLine($"{e.Channel, -24}{e.User, -24}{e.Content}");
         }
     }
 
