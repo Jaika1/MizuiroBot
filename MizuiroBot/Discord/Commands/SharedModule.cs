@@ -1,4 +1,5 @@
-﻿using Discord.Commands;
+﻿using AsyncTwitchLib;
+using Discord.Commands;
 using MizuiroBot.Shared;
 using System;
 using System.Collections.Generic;
@@ -15,13 +16,13 @@ namespace MizuiroBot.Discord.Commands
         {
             SharedBotInfo shared = SharedBotInfo.GetSharedInfo(Context.Guild.Id);
             if (shared.CustomCommands.Exists(x => x.Key == command)) {
-                CustomCommandInfo customCommand = shared.CustomCommands.Find(x => x.Key == command);
+                CustomTwitchCommandInfo customCommand = shared.CustomCommands.Find(x => x.Key == command);
                 customCommand.Value = response;
                 await Context.Channel.SendMessageAsync($"The repsonse given for the command `{Program.Config.CommandPrefix}{command}` has been updated successfully!");
             }
             else
             {
-                CustomCommandInfo customCommand = new CustomCommandInfo() {
+                CustomTwitchCommandInfo customCommand = new CustomTwitchCommandInfo() {
                     Key = command,
                     Value = response
                 };
@@ -38,7 +39,7 @@ namespace MizuiroBot.Discord.Commands
             SharedBotInfo shared = SharedBotInfo.GetSharedInfo(Context.Guild.Id);
             if (shared.CustomCommands.Exists(x => x.Key == command))
             {
-                CustomCommandInfo customCommand = shared.CustomCommands.Find(x => x.Key == command);
+                CustomTwitchCommandInfo customCommand = shared.CustomCommands.Find(x => x.Key == command);
                 shared.CustomCommands.Remove(customCommand);
                 await Context.Channel.SendMessageAsync($"Bye bye, `{Program.Config.CommandPrefix}{command}`.");
             }

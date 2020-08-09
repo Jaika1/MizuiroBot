@@ -1,17 +1,9 @@
-﻿using MizuiroBot;
-using MizuiroBot.Discord;
+﻿using MizuiroBot.Discord;
 using MizuiroBot.Shared;
 using MizuiroBot.Splatoon;
 using MizuiroBot.Tools;
 using AsyncTwitchLib;
-using System;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.Drawing;
-using System.IO;
-using System.Linq;
-using System.Reflection;
-using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -65,7 +57,8 @@ namespace MizuiroBot
 
         private static async Task TwitchBot_ChannelJoined(object sender, ChannelJoinedEventArgs e)
         {
-            await e.Channel.SendChatMessage("I'm alive, yippe!");
+            //await e.Channel.SendChatMessage("I'm alive, yippe!");
+            SharedBotInfo.GetSharedInfo(e.Channel.Channel)?.LinkCustomCommands(e.Channel);
         }
     }
 }

@@ -18,6 +18,11 @@
   <PropertyGroup Condition="'$(IsLinux)'=='true'">
     <DefineConstants>Linux</DefineConstants>
   </PropertyGroup>
+  <ItemGroup>
+    <Compile Remove="OldTwitch\**" />
+    <EmbeddedResource Remove="OldTwitch\**" />
+    <None Remove="OldTwitch\**" />
+  </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="Discord.Net" Version="2.2.0" />

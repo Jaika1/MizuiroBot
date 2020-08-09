@@ -2,8 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using System.Reflection.Metadata.Ecma335;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace AsyncTwitchLib
@@ -83,13 +81,18 @@ namespace AsyncTwitchLib
             return Task.CompletedTask;
         }
 
-        private Task TryProcessCommand(TwitchClient tcl, TwitchChannel channel, string content)
+        private async Task TryProcessCommand(TwitchClient tcl, TwitchChannel channel, string content)
         {
             if (content.StartsWith(prefixChar))
             {
                 string[] split = content.Split(" ");
                 string command = split[0].Replace("!", null);
-                if (commandList.ContainsKey(command))
+                if (channel.CustomCommands.Exists(x=>x.Key == command))
+                {
+                    CustomTwitchCommandInfo c = channel.CustomCommands.Find(x => x.Key == command);
+                    await channel.SendChatMessage(c.Value);
+                }
+                else if (commandList.ContainsKey(command))
                 {
                     MethodInfo m = commandList[command];
 
@@ -106,7 +109,7 @@ namespace AsyncTwitchLib
                         ParameterInfo p = m.GetParameters()[i];
                         Type t = p.ParameterType;
 
-                        if (i < parametersLength) {
+                        if (i < split.Length-1) {
                             switch (t.Name)
                             {
                                 case "String":
@@ -129,7 +132,6 @@ namespace AsyncTwitchLib
                     m.Invoke(tcm, paramaters);
                 }
             }
-            return Task.CompletedTask;
         }
     }
 }

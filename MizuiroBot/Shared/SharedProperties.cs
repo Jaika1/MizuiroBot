@@ -22,7 +22,7 @@ namespace MizuiroBot.Shared
         public static List<SharedBotInfo> SharedInfo => sharedInfoCollection;
         public ulong DiscordGuildId = 0;
         public string TwitchChannelName = "";
-        public List<CustomCommandInfo> CustomCommands = new List<CustomCommandInfo>(); //Key is the command identifier, value is the response.
+        public List<CustomTwitchCommandInfo> CustomCommands = new List<CustomTwitchCommandInfo>(); //Key is the command identifier, value is the response.
 
         public SharedBotInfo() { }
 
@@ -40,7 +40,8 @@ namespace MizuiroBot.Shared
             {
                 foreach (string file in Directory.EnumerateFiles(SharedInfoLocation, "*.json", SearchOption.TopDirectoryOnly))
                 {
-                    sharedInfoCollection.Add(JsonConvert.DeserializeObject<SharedBotInfo>(File.ReadAllText(file)));
+                    SharedBotInfo b = JsonConvert.DeserializeObject<SharedBotInfo>(File.ReadAllText(file));
+                    sharedInfoCollection.Add(b);
                 }
             }
             CVTS.WriteLineOk($"Successfully loaded shared info for {sharedInfoCollection.Count} servers!");
@@ -63,6 +64,11 @@ namespace MizuiroBot.Shared
             {
                 CVTS.WriteLineError($"Failed to save shared info! {e.Message}");
             }
+        }
+
+        public void LinkCustomCommands(TwitchChannel chan)
+        {
+            chan.SetCustomCommandList(CustomCommands);
         }
 
         public static SharedBotInfo GetSharedInfo(ulong discordGuild)
@@ -296,12 +302,6 @@ namespace MizuiroBot.Shared
             }
             return false;
         }
-    }
-
-    public class CustomCommandInfo
-    {
-        public string Key;
-        public string Value;
     }
 
     public enum LocaleSetting

@@ -1,4 +1,5 @@
-﻿using Discord;
+﻿using AsyncTwitchLib;
+using Discord;
 using Discord.Commands;
 using Discord.WebSocket;
 using MizuiroBot.Shared;
@@ -47,17 +48,13 @@ namespace MizuiroBot.Discord
         {
             SocketUserMessage umsg = (SocketUserMessage)msg;
             if (msg == null) return;
-            if (msg.Content == "helpTest")
-            {
-                return;
-            }
 
             int argPos = 0;
 
-            if (!umsg.HasCharPrefix(CommandPrefix, ref argPos) ||
-                umsg.Author.IsBot ||
-                umsg.Author.IsWebhook ||
-                umsg.Channel is SocketDMChannel) return;
+            if (!umsg.HasCharPrefix(CommandPrefix, ref argPos)) return;
+            if (umsg.Author.IsBot) return;
+            if (umsg.Author.IsWebhook) return;
+            if (umsg.Channel is SocketDMChannel) return;
 
             var context = new SocketCommandContext(botUser, umsg);
 
@@ -75,7 +72,7 @@ namespace MizuiroBot.Discord
                     {
                         try
                         {
-                            CustomCommandInfo customCommand = shared.CustomCommands.First(x => x.Key.StartsWith(umsg.Content.Remove(0, 1)));
+                            CustomTwitchCommandInfo customCommand = shared.CustomCommands.First(x => x.Key.StartsWith(umsg.Content.Remove(0, 1)));
                             await context.Channel.SendMessageAsync(customCommand.Value);
                         }
                         catch { }

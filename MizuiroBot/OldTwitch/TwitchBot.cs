@@ -1,4 +1,5 @@
-﻿using MizuiroBot.Shared;
+﻿using AsyncTwitchLib;
+using MizuiroBot.Shared;
 using MizuiroBot.Tools;
 using System;
 using System.Collections.Generic;
@@ -148,7 +149,7 @@ namespace MizuiroBot.Twitch
             {
                 try
                 {
-                    CustomCommandInfo customCommand = shared.CustomCommands.First(x => x.Key == e.Command.CommandText);
+                    CustomTwitchCommandInfo customCommand = shared.CustomCommands.First(x => x.Key == e.Command.CommandText);
                     botUser.SendMessage(commandChannel, customCommand.Value);
                 }
                 catch { }

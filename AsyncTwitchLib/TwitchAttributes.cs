@@ -19,4 +19,10 @@ namespace AsyncTwitchLib
             CommandName = name;
         }
     }
+
+    public class CustomTwitchCommandInfo
+    {
+        public string Key;
+        public string Value;
+    }
 }

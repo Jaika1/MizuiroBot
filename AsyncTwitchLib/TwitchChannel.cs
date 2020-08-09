@@ -9,6 +9,8 @@ namespace AsyncTwitchLib
     {
         private TwitchIrcClient client;
         public string Channel;
+        private List<CustomTwitchCommandInfo> customCommands = new List<CustomTwitchCommandInfo>();
+        public List<CustomTwitchCommandInfo> CustomCommands => customCommands;
 
         public TwitchChannel(string chan, TwitchIrcClient c)
         {
@@ -25,5 +27,10 @@ namespace AsyncTwitchLib
         {
             await client.PartChannel(Channel);
         }
+
+        public void SetCustomCommandList(List<CustomTwitchCommandInfo> customCommandList)
+        {
+            customCommands = customCommandList;
+        } 
     }
 }
